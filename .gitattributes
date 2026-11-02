@@ -1,0 +1,16 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Windows scripts - preserve CRLF
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Shell scripts - must preserve LF
+*.sh text eol=lf
+
+# Source files & documents - LF
+*.py text eol=lf
+*.html text eol=lf
+*.md text eol=lf
+*.swift text eol=lf

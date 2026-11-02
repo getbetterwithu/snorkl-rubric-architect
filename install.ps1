@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # Snorkl Rubric Architect — Windows Multi-Agent Installer & Updater (v14.1)
 # Supports: Antigravity / Gemini, Claude Code, OpenAI Codex, Aside
 # Repositories:
@@ -106,7 +106,7 @@ function Create-AgentLink($AgentKey, $AgentInfo) {
 
     # 감지 검사: 상위 에이전트 폴더 유무 확인 (명시적 지정이 없으면 미감지 시 건너뜀)
     if ($Agents.Count -eq 0 -and -not (Test-Path $HomeDir)) {
-        Write-Host "  - $AgentName: 미설치 (건너뜀)" -ForegroundColor DarkGray
+        Write-Host "  - $($AgentName): 미설치 (건너뜀)" -ForegroundColor DarkGray
         return 0
     }
     if ($Agents.Count -gt 0 -and $Agents -notcontains $AgentKey) {
@@ -126,7 +126,7 @@ function Create-AgentLink($AgentKey, $AgentInfo) {
         } else {
             # 실제 폴더인 경우
             if ($Force) {
-                Write-Host "  ⚠ $AgentName: 기존 실제 폴더를 -Force에 의해 교체합니다." -ForegroundColor Yellow
+                Write-Host "  ⚠ $($AgentName): 기존 실제 폴더를 -Force에 의해 교체합니다." -ForegroundColor Yellow
                 Remove-Item -Recurse -Force $TargetPath
             } else {
                 Write-Host "  [주의] $TargetPath 경로는 심볼릭 링크가 아닌 실제 디렉토리입니다. 덮어쓰려면 -Force를 사용하세요." -ForegroundColor Red
@@ -149,9 +149,9 @@ $BinDir = "$env:USERPROFILE\bin"
 if (-not (Test-Path $BinDir)) { New-Item -ItemType Directory -Path $BinDir -Force | Out-Null }
 $UpdateScript = @"
 @echo off
-echo ▶ Snorkl Rubric Architect 업데이트 확인 중...
+echo [Snorkl] Checking for skill updates...
 git -C "%USERPROFILE%\.snorkl-rubric-architect" pull --ff-only origin main
-echo ✓ 최신 버전으로 업데이트되었습니다.
+echo [Snorkl] Skill update complete.
 "@
 Set-Content -Path "$BinDir\snorkl-update.cmd" -Value $UpdateScript -Encoding Ascii
 

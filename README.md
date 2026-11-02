@@ -1,9 +1,9 @@
-# Snorkl Rubric Architect 📐✨ (v14.1)
+# Snorkl Rubric Architect 📐✨ (v14.2)
 
 > **Snorkl(스노클) 수학 서논술형 문항 캔버스 및 AI 4단계 정밀 루브릭 설계 시스템**  
 > Windows 및 macOS를 모두 지원하며, Claude Code, Google Antigravity, OpenAI Codex, Aside 등 모든 주요 AI 에이전트에서 동작하는 크로스 플랫폼 수학 문항 저작 스킬입니다.
 
-[![Skill Standard](https://img.shields.io/badge/Agent_Skill-v14.1-blue.svg)](https://github.com/getbetterwithu/snorkl-rubric-architect)
+[![Skill Standard](https://img.shields.io/badge/Agent_Skill-v14.2-blue.svg)](https://github.com/getbetterwithu/snorkl-rubric-architect)
 [![Platform](https://img.shields.io/badge/Platform-Windows_%7C_macOS_%7C_Claude_%7C_Gemini_%7C_Codex-green.svg)](https://github.com/getbetterwithu/snorkl-rubric-architect)
 [![License](https://img.shields.io/badge/License-MIT-orange.svg)](LICENSE)
 
@@ -36,24 +36,28 @@ snorkl-update
 
 ---
 
-## 💡 v14.1 핵심 기능
+## 💡 v14.2 핵심 기능 및 강화점
 
 ### 1. 2022 개정 대한민국 중학 수학 전수 표준화 (`references/`)
 - 중1부터 중3까지 총 21개 전체 대단원의 **교과서 대표 풀이(1순위)**를 의무화.
 - 연립방정식 해의 개수 문제에서 고교 대수식 억지 증명($0 \cdot x = 0$)을 금지하고, 계수비($\frac{a}{a'} = \frac{b}{b'} = \frac{c}{c'}$)와 직선의 일치를 강제.
 - 역비(Reverse Ratio), 사후 비례 설명, 부호 1회 이월 등 실전 교실형 방어 원칙 내장.
+- 넓이 표기 시 경시대회식 대괄호(`[△ABC]`)를 엄격히 금지하고 교과서 표준(`△ABC의 넓이`) 준수.
 
-### 2. 1턴 1단계 Hard Stop 강제 (AI 자가 폭주 방지)
+### 2. 기하 영역 수학적 무게중심 계산 및 자동 안착 엔진
+- `snorkl_geometry_engine.py`에 그린 정리 기반 면적 가중 무게중심(`polygon_centroid`) 및 `render_shaded_region()` 탑재.
+- 도형의 색칠된 영역 꼭짓점을 선분과 100% 밀착시키고, 면적 라벨($S$)을 영역의 수학적 무게중심에 화이트 헤일로와 함께 자동 안착.
+
+### 3. 수식 조판의 3원화 및 대화창 100% LaTeX 사전 탑재
+- **대화창 검토 (Step 1~4)**: `△, ∽` 등 날것의 유니코드 혼용을 금지하고, 100% 완전한 LaTeX 수식(`\triangle, \sim, \overline{AB}`)으로 조판.
+- **스노클 복사용**: 스노클 공식 웹 UI 명칭인 **`정답/평가 기준`**에 바로 붙여넣을 수 있도록 **LaTeX를 100% 배제한 순수 텍스트(Plain Text)**로 변환 제공.
+- **교사용 인쇄 PDF**: 스노클용 텍스트를 그대로 쓰지 않고, 교과서급 **KaTeX 마크다운 수식을 적용하여 A4 1페이지에 수납**.
+
+### 4. Windows 고해상도 렌더러 패치 (2000×1000 레티나)
+- `render_card.py`에 `--force-device-scale-factor=2`를 적용하여 Windows Edge 헤드리스에서도 여백 없이 꽉 찬 고화질 2000×1000 화이트보드 캔버스 생성 보장.
+
+### 5. 1턴 1단계 Hard Stop 강제 (AI 자가 폭주 방지)
 - AI가 자의적으로 단계를 건너뛰거나 한 번에 결과물을 쏟아내지 못하도록, 매 턴마다 출력을 즉시 중단하고 교사의 승인(`다음`, `좋아`)을 기다리도록 통제.
-
-### 3. 최종 산출물 3종 세트 완결 (`./snorkl_output/`)
-1. 🖼️ **`[문제제목]_문제등록화면.png`**: (2000×1000 고화질) 스노클 화이트보드 문제 등록 배경 업로드용 카드.
-2. 📋 **`[문제제목]_정답_평가기준.md`**: 스노클 AI 루브릭 란에 복사해 넣는 **LaTeX 100% 배제 순수 텍스트(Plain Text)** 루브릭.
-3. 📄 **`[문제제목]_교사참고용_채점기준표.pdf`**: 문제 카드 이미지 + KaTeX 수식 모범답안 + 4단계 배점표가 1~2페이지로 컴팩트하게 정리된 **교사용 인쇄·보관용 PDF 문서**.
-
-### 4. 수식 표기 이원화 (검토 편의 vs 스노클 호환)
-- **대화창 검토 단계 (Step 1~4)**: 교사가 읽기 편하도록 $\frac{a}{b}$, $\sqrt{x}$, 연립방정식 대괄호 등 **교과서 수준의 LaTeX 마크다운 수식**으로 미려하게 조판.
-- **최종 스노클 복사본**: 스노클 웹 시스템의 제약을 고려하여 **LaTeX를 100% 배제한 Plain Text**로 자동 변환 제공.
 
 ---
 
@@ -78,18 +82,19 @@ flowchart TD
 
 ```
 snorkl-rubric-architect/
-├── SKILL.md                          # 에이전트 공용 프롬프트 및 지침 (v14.1)
+├── SKILL.md                          # 에이전트 공용 프롬프트 및 지침 (v14.2)
 ├── install.sh                        # macOS / Linux 원클릭 설치 스크립트
-├── install.ps1                       # Windows PowerShell 원클릭 설치 스크립트
+├── install.ps1                       # Windows PowerShell 원클릭 설치 스크립트 (UTF-8 with BOM)
 ├── publish.sh                        # 듀얼 레포 동기화 배포 스크립트
+├── .gitattributes                    # 줄바꿈 및 인코딩 보존 설정
 ├── README.md                         # 사용자 안내 문서
 ├── references/
 │   └── korean_middle_math_standards.md # 2022 개정 중학 수학 21개 대단원 전수 표준 풀이 가이드
 └── scripts/
     ├── template_card.html            # KaTeX 2000x1000 캔버스 마스터 HTML 템플릿
-    ├── template_teacher_sheet.html   # 교사용 A4 1~2페이지 컴팩트 채점기준표 템플릿
-    ├── snorkl_geometry_engine.py     # 기하 벡터 그래픽 및 클라우드 마스크 엔진
-    ├── render_card.py                # Windows(Edge) & macOS(WebKit) 초고속 PNG/PDF 렌더러
+    ├── template_teacher_sheet.html   # 교사용 A4 1페이지 컴팩트 채점기준표 템플릿
+    ├── snorkl_geometry_engine.py     # 기하 벡터 그래픽, 무게중심 계산 및 음영 엔진
+    ├── render_card.py                # Windows(Edge 2x) & macOS(WebKit) 초고속 PNG/PDF 렌더러
     └── render_webkit.swift           # macOS WebKit 소스
 ```
 

@@ -100,7 +100,9 @@ def render_png(html_path, png_path, width=1000, height=500):
             "--headless=new",
             "--disable-gpu",
             "--hide-scrollbars",
-            f"--window-size={width * 2},{height * 2}",
+            "--force-device-scale-factor=2",
+            f"--window-size={width},{height}",
+            "--allow-file-access-from-files",
             f"--screenshot={png_abs}",
             file_url
         ]

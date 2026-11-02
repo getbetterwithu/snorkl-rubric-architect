@@ -210,3 +210,87 @@ def render_vertex_label(point, label, direction="top", offset=14, font_size=25, 
         anchor = "start"
         
     return f'<text x="{point[0] + dx:.2f}" y="{point[1] + dy:.2f}" font-family="Times New Roman, serif" font-weight="bold" font-size="{font_size}" fill="{color}" text-anchor="{anchor}">{label}</text>'
+
+def triangle_centroid(p1, p2, p3):
+    """삼각형 세 꼭짓점의 수학적 무게중심 계산: ((x1+x2+x3)/3, (y1+y2+y3)/3)"""
+    return ((p1[0] + p2[0] + p3[0]) / 3.0, (p1[1] + p2[1] + p3[1]) / 3.0)
+
+def polygon_centroid(points):
+    """
+    임의의 다각형(삼각형 및 볼록/오목 다각형)의 정확한 면적 가중 무게중심(Centroid) 계산.
+    그린 정리(Green's Theorem) 및 신발끈 면적 가중 공식 적용.
+    """
+    n = len(points)
+    if n == 0:
+        return (0.0, 0.0)
+    if n == 1:
+        return points[0]
+    if n == 2:
+        return midpoint(points[0], points[1])
+    if n == 3:
+        return triangle_centroid(points[0], points[1], points[2])
+
+    signed_area = 0.0
+    cx = 0.0
+    cy = 0.0
+    for i in range(n):
+        x0, y0 = points[i]
+        x1, y1 = points[(i + 1) % n]
+        cross = x0 * y1 - x1 * y0
+        signed_area += cross
+        cx += (x0 + x1) * cross
+        cy += (y0 + y1) * cross
+
+    signed_area *= 0.5
+    if abs(signed_area) < 1e-6:
+        return (sum(p[0] for p in points) / n, sum(p[1] for p in points) / n)
+
+    cx /= (6.0 * signed_area)
+    cy /= (6.0 * signed_area)
+    return (cx, cy)
+
+def line_intersection(p1, p2, p3, p4):
+    """
+    두 직선 (p1-p2)와 (p3-p4)의 수학적 교점 좌표를 정확하게 계산.
+    중선의 교점(무게중심), 수선의 발, 대각선 교점 등을 오차 없이 도출할 때 사용.
+    """
+    x1, y1 = p1
+    x2, y2 = p2
+    x3, y3 = p3
+    x4, y4 = p4
+
+    denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
+    if abs(denom) < 1e-9:
+        return midpoint(p1, p2) # 평행 또는 일치 시 중점 반환
+
+    px = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / denom
+    py = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / denom
+    return (px, py)
+
+def render_shaded_region(points, fill="#E0F2FE", stroke="#38BDF8", stroke_width=1.5,
+                         label=None, label_color="#0369A1", font_size=22, is_math=True,
+                         halo_color="#FFFFFF", halo_width=5):
+    """
+    [교과서 표준 영역 음영 & 무게중심 라벨 안착 엔진 v14.2]
+    1. points(꼭짓점 튜플 리스트)를 받아 변과 100% 빈틈없이 일치하는 밀착 <polygon> 작도.
+    2. 다각형의 수학적 무게중심(Centroid)을 오차 0px로 자동 산출.
+    3. 라벨(S, 넓이 숫자 등)이 존재할 경우, 영역의 정중앙에 dominant-baseline="central" text-anchor="middle"로 안착.
+    4. 텍스트 가독성을 보장하는 은은한 화이트 헤일로 마스크(paint-order) 기본 탑재.
+    """
+    pts_str = " ".join(format_pt(p) for p in points)
+    stroke_attr = f'stroke="{stroke}" stroke-width="{stroke_width}"' if stroke and stroke.lower() != "none" else 'stroke="none"'
+    poly_tag = f'<polygon points="{pts_str}" fill="{fill}" {stroke_attr} stroke-linejoin="round"/>'
+
+    if not label:
+        return poly_tag
+
+    cx, cy = polygon_centroid(points)
+    font_style = 'font-style="italic"' if is_math else ''
+    text_tag = (
+        f'<text x="{cx:.2f}" y="{cy:.2f}" '
+        f'font-family="Times New Roman, serif" font-size="{font_size}" font-weight="bold" {font_style} '
+        f'fill="{label_color}" text-anchor="middle" dominant-baseline="central" '
+        f'style="paint-order: stroke fill; stroke: {halo_color}; stroke-width: {halo_width}px; stroke-linejoin: round; stroke-linecap: round;">'
+        f'{label}</text>'
+    )
+    return f"{poly_tag}\n{text_tag}"
