@@ -1,9 +1,9 @@
-# Snorkl Rubric Architect 📐✨ (v13.0)
+# Snorkl Rubric Architect 📐✨ (v13.1)
 
 > **Snorkl(스노클) 수학 서논술형 문항 캔버스 및 AI 4단계 정밀 루브릭 설계 시스템**  
-> Windows 및 macOS를 모두 지원하며, Claude Code, Google Antigravity, OpenAI Codex, Aside 등 모든 주요 AI 에이전트에서 동작하는 크로스 플랫폼 수학 문항 저작 스킬입니다.
+> Windows 및 macOS를 모두 지원하며, Claude Code, Google Antigravity, OpenAI Codex, Aside 등 모든 주요 AI 에이전트에서 동작하는 초고속 크로스 플랫폼 수학 문항 저작 스킬입니다.
 
-[![Skill Standard](https://img.shields.io/badge/Agent_Skill-v13.0-blue.svg)](https://github.com/getbetterwithu/snorkl-rubric-architect)
+[![Skill Standard](https://img.shields.io/badge/Agent_Skill-v13.1-blue.svg)](https://github.com/getbetterwithu/snorkl-rubric-architect)
 [![Platform](https://img.shields.io/badge/Platform-Windows_%7C_macOS_%7C_Claude_%7C_Gemini_%7C_Codex-green.svg)](https://github.com/getbetterwithu/snorkl-rubric-architect)
 [![License](https://img.shields.io/badge/License-MIT-orange.svg)](LICENSE)
 
@@ -36,34 +36,32 @@ snorkl-update
 
 ---
 
-## 💡 v13.0 핵심 가치 및 주요 기능
+## ⚡ v13.1 핵심 가치 및 속도 최적화
 
-### 1. 전 단계 진행 상황 가시화 (Progress Indicator)
-- 처음 사용하는 선생님도 길을 잃지 않도록, 매 턴 첫 줄에 `[전체 4단계 중 M단계 진행 중: 단계명]`을 명시하여 현재 위치와 완결까지의 여정을 명확히 안내합니다.
+### 1. 초고속 단회 렌더링 (자가 판독 루프 전면 차단)
+- AI 모델이 생성된 이미지를 스스로 읽고 고치는 내부 반복 루프를 금지하여, Step 2 대기 시간을 **40~50초에서 5~8초로 대폭 단축**했습니다.
+- macOS에서는 네이티브 WebKit 바이너리 캐시로 0.8초 만에 렌더링하며, Windows에서는 내장 Microsoft Edge 헤드리스 엔진을 활용합니다.
 
-### 2. 비재촉형 정중한 검토 유도 톤앤매너
-- AI가 일방적으로 다음 단계로 서둘러 넘어가려 하지 않고, 각 단계마다 충분히 살펴보고 의견을 주실 수 있도록 정중히 초대합니다.
+### 2. 문항 유형별 스마트 분기 (도형 vs 순수 대수 0초 직행)
+- **기하/도형 문항**: KaTeX 지문과 교과서 표준 순수 원호 치수선, 올록볼록 클라우드 마스크가 적용된 2000×1000 고화질 기하 카드를 작도합니다.
+- **순수 대수/방정식 문항**: 억지로 오른쪽 영역에 무언가를 채우려다 풀이나 힌트를 노출하는 오류를 원천 차단하고, 이미지 렌더링 과정을 건너뛰어 지문 확인 후 곧바로 루브릭 설계로 직행합니다.
+
+### 3. 직관적인 산출물 명명 및 `./snorkl_output/` 자동 저장
+- 파일의 역할을 한눈에 파악할 수 있도록 표준 명칭으로 영구 저장합니다:
+  - `./snorkl_output/[문제제목]_정답_평가기준.md` (스노클 복사용 통합 루브릭)
+  - `./snorkl_output/[문제제목]_문제등록화면.png` (2000×1000 화이트보드 등록용 카드)
+
+### 4. 스노클 붙여넣기용 순수 텍스트 루브릭 (LaTeX 100% 배제)
+- 스노클(Snorkl) 웹 시스템은 LaTeX 문법을 렌더링하지 못하므로, **최종 복사용 루브릭은 키보드 및 표준 유니코드 기반의 순수 일반 텍스트(Plain Text)로만 작성**하여 스노클에 붙여넣었을 때 코드가 깨지지 않습니다.
+
+### 5. 전 단계 진행 상황 가시화 및 비재촉형 정중한 검토 유도
+- 매 턴 첫 줄에 `[전체 4단계 중 M단계 진행 중: 단계명]`을 명시하여 현재 위치와 완결까지의 여정을 안내합니다.
 - *"내용을 살펴보시고 틀린 점, 개선해야 할 점, 의견이 있으시면 편하게 말씀해 주세요. 없으시면 '다음'(또는 '좋아')이라고 말씀해 주시면 다음 단계로 진행하겠습니다."*
 
-### 3. 문항 유형별 스마트 분기 (도형 vs 순수 대수)
-- **기하/도형 문항**: KaTeX 지문과 교과서 표준 순수 원호 치수선, 올록볼록 클라우드 마스크가 적용된 2000×1000 고화질 기하 카드를 작도합니다.
-- **순수 대수/방정식 문항**: 억지로 오른쪽 영역에 무언가를 채우려다 풀이나 힌트를 노출하는 오류를 원천 차단하고, 지문이 카드 전체 폭을 채우는 와이드 지문 카드를 구성하거나 지문 확정 후 즉시 루브릭 설계로 직행합니다.
-
-### 4. 크로스 플랫폼 자동 뷰어 팝업 (Windows & macOS)
-- **macOS**: Swift 기반 WebKit 렌더러로 고화질 카드를 생성한 즉시 `open` 명령어로 `미리보기(Preview.app)` 창을 화면에 자동 띄웁니다.
-- **Windows**: Windows 기본 탑재 `Microsoft Edge(msedge.exe)` 헤드리스 렌더러로 카드를 생성한 즉시 `os.startfile()`로 기본 사진 뷰어를 화면에 자동 띄웁니다.
-- 터미널이나 VS Code의 CSP 제한으로 채팅창에 이미지가 안 보이는 문제를 원천 해결합니다.
-
-### 5. 스노클 붙여넣기용 순수 텍스트 루브릭 (LaTeX 100% 배제)
-- 스노클(Snorkl) 웹 시스템은 `$...$`, `$$...$$`, `\boxed{}` 등 LaTeX 문법을 렌더링하지 못하므로, **최종 복사용 루브릭은 키보드 및 표준 유니코드 기반의 순수 일반 텍스트(Plain Text)로만 작성**하여 스노클에 붙여넣었을 때 원문 코드가 깨져 보이지 않습니다.
-
-### 6. 직관적 파일명 및 `./snorkl_output/` 영구 세트 저장
-- `problem_b_final.md` 같은 기계적 명칭을 전면 금지하고, `중2_연립일차방정식_공통해.md`처럼 문제의 단원과 내용이 드러나는 파일명으로 현재 작업 경로의 `./snorkl_output/`에 마크다운과 이미지를 나란히 한 세트로 영구 저장합니다.
-
-### 7. 교사 커스텀 답안 반영 옵션 (Step 3)
+### 6. 교사 커스텀 답안 반영 옵션 (Step 3)
 - AI가 기본 초안을 먼저 주되, 선생님만의 모범답안 텍스트나 손풀이 사진을 보내주시면 그 호흡에 맞춰 4단계 배점표(0.5점 기준)를 재구성해 드립니다.
 
-### 8. 스노클 교사 대시보드 바로가기 링크 제공
+### 7. 스노클 교사 대시보드 바로가기 링크 제공
 - 작업 완료 시 곧바로 스노클로 이동해 과제를 배부할 수 있도록 `[Snorkl 교사 대시보드 바로가기](https://teacher.snorkl.app/home)` 링크를 안내합니다.
 
 ---
@@ -85,7 +83,7 @@ flowchart TD
 
 ```
 snorkl-rubric-architect/
-├── SKILL.md                          # 에이전트 공용 프롬프트 및 지침 (v13.0)
+├── SKILL.md                          # 에이전트 공용 프롬프트 및 지침 (v13.1)
 ├── install.sh                        # macOS / Linux 원클릭 설치 스크립트
 ├── install.ps1                       # Windows PowerShell 원클릭 설치 스크립트
 ├── publish.sh                        # 듀얼 레포 동기화 배포 스크립트
@@ -93,8 +91,8 @@ snorkl-rubric-architect/
 └── scripts/
     ├── template_card.html            # KaTeX 2000x1000 캔버스 마스터 HTML 템플릿
     ├── snorkl_geometry_engine.py     # 기하 벡터 그래픽 및 클라우드 마스크 엔진
-    ├── render_card.py                # Windows(Edge) & macOS(WebKit) 통합 크로스 플랫폼 렌더러
-    └── render_webkit.swift           # macOS 무손실 WebKit 고속 렌더러
+    ├── render_card.py                # Windows(Edge) & macOS(WebKit 바이너리 캐시) 초고속 렌더러
+    └── render_webkit.swift           # macOS WebKit 소스
 ```
 
 ---

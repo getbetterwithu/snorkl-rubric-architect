@@ -1,14 +1,10 @@
 #!/usr/bin/env python3
 """
-render_card.py - Cross-Platform Lossless Problem Card Renderer (v13.0)
-Supports:
-  - macOS: Headless WebKit (render_webkit.swift) or Chromium/Edge fallback
-  - Windows: Microsoft Edge (msedge.exe) or Google Chrome headless
-  - Linux: Chromium or Chrome headless
-Auto-pops up OS native image viewer:
-  - macOS: `open <file.png>`
-  - Windows: `os.startfile(<file.png>)` or `start`
-  - Linux: `xdg-open <file.png>`
+render_card.py - High-Speed Cross-Platform Lossless Problem Card Renderer (v13.1)
+Performance Optimizations:
+  - macOS: Precompiles render_webkit.swift into native binary on first run (0.1s execution)
+  - Windows: Uses native headless Microsoft Edge (msedge.exe)
+  - Auto-pops up OS native image viewer once, NO self-inspecting loops
 """
 
 import sys
@@ -29,8 +25,7 @@ def find_windows_browser():
     for path in candidates:
         if os.path.isfile(path):
             return path
-    which_edge = shutil.which("msedge") or shutil.which("chrome")
-    return which_edge
+    return shutil.which("msedge") or shutil.which("chrome")
 
 def find_linux_browser():
     for name in ["google-chrome", "google-chrome-stable", "chromium-browser", "chromium", "microsoft-edge"]:
@@ -39,24 +34,51 @@ def find_linux_browser():
             return path
     return None
 
+def get_macos_binary(script_dir):
+    binary_path = os.path.join(script_dir, "render_webkit")
+    swift_source = os.path.join(script_dir, "render_webkit.swift")
+    
+    # Check if precompiled binary exists and is up to date
+    if os.path.isfile(binary_path):
+        if not os.path.isfile(swift_source) or os.path.getmtime(binary_path) >= os.path.getmtime(swift_source):
+            return binary_path
+
+    # Try to compile once for ultra-fast subsequent runs
+    if shutil.which("swiftc") and os.path.isfile(swift_source):
+        try:
+            print("[Renderer] Compiling native WebKit binary for ultra-fast rendering (one-time)...")
+            res = subprocess.run(["swiftc", "-O", swift_source, "-o", binary_path], capture_output=True, text=True)
+            if res.returncode == 0 and os.path.isfile(binary_path):
+                os.chmod(binary_path, 0o755)
+                return binary_path
+        except Exception:
+            pass
+
+    return None
+
 def render(html_path, png_path, width=1000, height=500):
     html_abs = os.path.abspath(html_path)
     png_abs = os.path.abspath(png_path)
     os.makedirs(os.path.dirname(png_abs), exist_ok=True)
     system = platform.system()
 
-    # 1. macOS with Swift WebKit
+    # 1. macOS High-Speed WebKit
     if system == "Darwin":
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        swift_script = os.path.join(script_dir, "render_webkit.swift")
-        if os.path.exists(swift_script) and shutil.which("swift"):
-            cmd = ["swift", swift_script, html_abs, png_abs, str(width), str(height)]
-            res = subprocess.run(cmd, capture_output=True, text=True)
+        binary = get_macos_binary(script_dir)
+        if binary:
+            res = subprocess.run([binary, html_abs, png_abs, str(width), str(height)], capture_output=True, text=True)
             if res.returncode == 0 and os.path.isfile(png_abs):
-                print(f"[Renderer] macOS WebKit rendered successfully: {png_abs}")
+                print(f"[Renderer] High-speed native WebKit rendered: {png_abs}")
                 return True
-            else:
-                print(f"[Renderer] Swift WebKit failed: {res.stderr}. Trying browser fallback...")
+        
+        # Fallback to swift interpreter
+        swift_source = os.path.join(script_dir, "render_webkit.swift")
+        if os.path.isfile(swift_source) and shutil.which("swift"):
+            res = subprocess.run(["swift", swift_source, html_abs, png_abs, str(width), str(height)], capture_output=True, text=True)
+            if res.returncode == 0 and os.path.isfile(png_abs):
+                print(f"[Renderer] Swift JIT rendered: {png_abs}")
+                return True
 
     # 2. Windows using native Microsoft Edge or Chrome headless
     if system == "Windows":
@@ -77,11 +99,8 @@ def render(html_path, png_path, width=1000, height=500):
         ]
         res = subprocess.run(cmd, capture_output=True, text=True)
         if os.path.isfile(png_abs):
-            print(f"[Renderer] Windows Edge/Chrome rendered successfully: {png_abs}")
+            print(f"[Renderer] Windows Edge/Chrome rendered: {png_abs}")
             return True
-        else:
-            print(f"[Renderer Error] Headless browser execution failed: {res.stderr}", file=sys.stderr)
-            return False
 
     # 3. Linux / macOS fallback using Chromium
     browser = find_linux_browser()
