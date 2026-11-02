@@ -9,7 +9,7 @@
   <style>
     @page {
       size: A4 portrait;
-      margin: 15mm 15mm 15mm 15mm;
+      margin: 10mm 12mm 10mm 12mm;
     }
     * { box-sizing: border-box; }
     body {
@@ -18,67 +18,77 @@
       background: #FFFFFF;
       margin: 0;
       padding: 0;
-      font-size: 13px;
-      line-height: 1.6;
+      font-size: 11.5px;
+      line-height: 1.5;
     }
     .header {
       border-bottom: 2px solid #0F172A;
-      padding-bottom: 8px;
-      margin-bottom: 16px;
+      padding-bottom: 6px;
+      margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
     }
     .header h1 {
       margin: 0;
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 800;
-      letter-spacing: -0.5px;
+      letter-spacing: -0.4px;
+      color: #0F172A;
     }
     .header .tag {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
-      color: #475569;
+      color: #334155;
       background: #F1F5F9;
-      padding: 3px 8px;
+      border: 1px solid #E2E8F0;
+      padding: 2px 7px;
       border-radius: 4px;
     }
     .section-title {
-      font-size: 15px;
+      font-size: 13.5px;
       font-weight: 700;
       color: #1E293B;
-      border-left: 4px solid #2563EB;
-      padding-left: 8px;
-      margin: 14px 0 8px 0;
-      letter-spacing: -0.3px;
+      border-left: 3px solid #0284C7;
+      padding-left: 6px;
+      margin: 10px 0 6px 0;
+      letter-spacing: -0.2px;
+      page-break-after: avoid;
+    }
+    .card-preview-container {
+      text-align: center;
+      margin-bottom: 8px;
+      page-break-inside: avoid;
     }
     .card-preview {
       width: 100%;
-      max-height: 240px;
+      max-height: 180px;
       object-fit: contain;
       border: 1px solid #CBD5E1;
-      border-radius: 8px;
-      margin-bottom: 12px;
-      display: block;
+      border-radius: 6px;
       background: #F8FAFC;
+      display: block;
+      margin: 0 auto;
     }
     .info-box {
       background: #F8FAFC;
       border: 1px solid #E2E8F0;
       border-radius: 6px;
-      padding: 10px 14px;
-      margin-bottom: 12px;
-      font-size: 13px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      font-size: 11.5px;
+      page-break-inside: avoid;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 8px 0 14px 0;
-      font-size: 12.5px;
+      margin: 6px 0 10px 0;
+      font-size: 11px;
+      page-break-inside: avoid;
     }
     th, td {
       border: 1px solid #CBD5E1;
-      padding: 6px 10px;
+      padding: 5px 8px;
       text-align: left;
       vertical-align: top;
     }
@@ -87,34 +97,52 @@
       font-weight: 700;
       color: #1E293B;
     }
-    .th-stage { width: 18%; }
-    .th-full { width: 42%; }
+    .th-stage { width: 17%; }
+    .th-full { width: 43%; }
     .th-partial { width: 40%; }
-    .guardrails-list {
-      margin: 6px 0;
-      padding-left: 20px;
-      font-size: 12px;
+    .alt-solutions-box {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      font-size: 11px;
+      page-break-inside: avoid;
+    }
+    .guardrails-box {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 10.5px;
       color: #334155;
+      page-break-inside: avoid;
+    }
+    .guardrails-list {
+      margin: 4px 0;
+      padding-left: 18px;
+      line-height: 1.45;
     }
     .guardrails-list li {
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
     .footer {
-      margin-top: 20px;
+      margin-top: 12px;
       border-top: 1px solid #E2E8F0;
-      padding-top: 6px;
-      font-size: 11px;
+      padding-top: 4px;
+      font-size: 10px;
       color: #94A3B8;
       display: flex;
       justify-content: space-between;
+      page-break-before: avoid;
     }
-    .katex { font-size: 1.05em; }
+    .katex { font-size: 1.04em; }
   </style>
 </head>
 <body>
   <div class="header">
     <div>
-      <span style="font-size: 11px; color: #2563EB; font-weight: 700;">SNORKL 서논술형 평가</span>
+      <span style="font-size: 10px; color: #0284C7; font-weight: 700; letter-spacing: 0.5px;">SNORKL 서논술형 평가</span>
       <h1><!-- TITLE_PLACEHOLDER --></h1>
     </div>
     <div class="tag">교사 참고용 마스터 기준표 (4점 만점)</div>
@@ -123,7 +151,7 @@
   <!-- CONTENT_HTML_PLACEHOLDER -->
 
   <div class="footer">
-    <span>Snorkl Rubric Architect v14.0 Master Edition</span>
+    <span>Snorkl Rubric Architect v14.1 Master Edition</span>
     <span>https://teacher.snorkl.app/home</span>
   </div>
 
