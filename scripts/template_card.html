@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      width: 1000px;
+      height: 500px;
+      background: #FFFFFF;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .card {
+      width: 996px;
+      height: 496px;
+      background: #FFFFFF;
+      border: 2px solid #E2E8F0;
+      border-radius: 16px;
+      display: flex;
+      padding: 30px 40px;
+      position: relative;
+    }
+    .divider {
+      position: absolute;
+      left: 470px;
+      top: 30px;
+      bottom: 30px;
+      width: 1px;
+      border-left: 2px dashed #F1F5F9;
+    }
+    .passage {
+      width: 430px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      color: #0F172A;
+      font-size: 23px;
+      line-height: 1.85;
+      letter-spacing: -0.3px;
+    }
+    .passage .katex {
+      font-size: 1.08em;
+      font-family: KaTeX_Main, "Times New Roman", serif;
+    }
+    .target-question {
+      margin-top: 24px;
+      font-size: 24px;
+      font-weight: 700;
+      color: #0F172A;
+      letter-spacing: -0.5px;
+    }
+    .sub-note {
+      margin-top: 24px;
+      font-size: 15px;
+      color: #64748B;
+      font-weight: 400;
+    }
+    .geometry {
+      position: absolute;
+      left: 490px;
+      top: 20px;
+      width: 480px;
+      height: 456px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    svg {
+      overflow: visible;
+    }
+    .vertex-label {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 24px;
+      font-weight: bold;
+      fill: #1E293B;
+    }
+    .dim-halo {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 18px;
+      font-weight: bold;
+      fill: #0F172A;
+      paint-order: stroke fill;
+      stroke: #FFFFFF;
+      stroke-width: 7px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+    .dim-var {
+      font-family: KaTeX_Math, "Times New Roman", italic, serif;
+      font-style: italic;
+      font-size: 18px;
+      font-weight: bold;
+      fill: #0F172A;
+      paint-order: stroke fill;
+      stroke: #FFFFFF;
+      stroke-width: 7px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+    .angle-label {
+      font-family: -apple-system, BlinkMacSystemFont, "Times New Roman", sans-serif;
+      font-size: 16px;
+      font-weight: bold;
+      fill: #0F172A;
+      paint-order: stroke fill;
+      stroke: #FFFFFF;
+      stroke-width: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="passage">
+      <!-- PASSAGE_HTML_PLACEHOLDER -->
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="geometry">
+      <!-- GEOMETRY_SVG_PLACEHOLDER -->
+    </div>
+  </div>
+
+  <script>
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ]
+    });
+  </script>
+</body>
+</html>
