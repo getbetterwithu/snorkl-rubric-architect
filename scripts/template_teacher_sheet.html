@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title><!-- TITLE_PLACEHOLDER --> - 교사 참고용 채점기준표</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 15mm 15mm 15mm 15mm;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", sans-serif;
+      color: #0F172A;
+      background: #FFFFFF;
+      margin: 0;
+      padding: 0;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .header {
+      border-bottom: 2px solid #0F172A;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    .header .tag {
+      font-size: 12px;
+      font-weight: 600;
+      color: #475569;
+      background: #F1F5F9;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1E293B;
+      border-left: 4px solid #2563EB;
+      padding-left: 8px;
+      margin: 14px 0 8px 0;
+      letter-spacing: -0.3px;
+    }
+    .card-preview {
+      width: 100%;
+      max-height: 240px;
+      object-fit: contain;
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      display: block;
+      background: #F8FAFC;
+    }
+    .info-box {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      font-size: 13px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0 14px 0;
+      font-size: 12.5px;
+    }
+    th, td {
+      border: 1px solid #CBD5E1;
+      padding: 6px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #F1F5F9;
+      font-weight: 700;
+      color: #1E293B;
+    }
+    .th-stage { width: 18%; }
+    .th-full { width: 42%; }
+    .th-partial { width: 40%; }
+    .guardrails-list {
+      margin: 6px 0;
+      padding-left: 20px;
+      font-size: 12px;
+      color: #334155;
+    }
+    .guardrails-list li {
+      margin-bottom: 3px;
+    }
+    .footer {
+      margin-top: 20px;
+      border-top: 1px solid #E2E8F0;
+      padding-top: 6px;
+      font-size: 11px;
+      color: #94A3B8;
+      display: flex;
+      justify-content: space-between;
+    }
+    .katex { font-size: 1.05em; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <span style="font-size: 11px; color: #2563EB; font-weight: 700;">SNORKL 서논술형 평가</span>
+      <h1><!-- TITLE_PLACEHOLDER --></h1>
+    </div>
+    <div class="tag">교사 참고용 마스터 기준표 (4점 만점)</div>
+  </div>
+
+  <!-- CONTENT_HTML_PLACEHOLDER -->
+
+  <div class="footer">
+    <span>Snorkl Rubric Architect v14.0 Master Edition</span>
+    <span>https://teacher.snorkl.app/home</span>
+  </div>
+
+  <script>
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ]
+    });
+  </script>
+</body>
+</html>

@@ -1,18 +1,31 @@
 # ==============================================================================
-# Snorkl Rubric Architect — Windows Multi-Agent Installer & Updater (PowerShell)
+# Snorkl Rubric Architect — Windows Multi-Agent Installer & Updater (v14.0)
 # Supports: Antigravity / Gemini, Claude Code, OpenAI Codex, Aside
-# Repository: https://github.com/getbetterwithu/snorkl-rubric-architect
+# Repositories:
+#   - Public:  https://github.com/getbetterwithu/snorkl-rubric-architect
+#   - Dev:     https://github.com/getbetterwithu/snorkl-rubric-architect-dev
 # ==============================================================================
+
+param(
+    [string]$RepoUrl = "https://github.com/getbetterwithu/snorkl-rubric-architect.git",
+    [switch]$Dev
+)
 
 $ErrorActionPreference = "Stop"
 
+if ($Dev) {
+    $RepoUrl = "https://github.com/getbetterwithu/snorkl-rubric-architect-dev.git"
+}
+
 $InstallDir = "$env:USERPROFILE\.snorkl-rubric-architect"
-$RepoUrl = "https://github.com/getbetterwithu/snorkl-rubric-architect.git"
 
 Write-Host "======================================================" -ForegroundColor Cyan
-Write-Host "   Snorkl Rubric Architect Windows Installer (v13.0)  " -ForegroundColor Cyan
+Write-Host "   Snorkl Rubric Architect Windows Installer (v14.0)  " -ForegroundColor Cyan
 Write-Host "   (Claude Code · Gemini/Antigravity · Codex · Aside) " -ForegroundColor Cyan
 Write-Host "======================================================" -ForegroundColor Cyan
+if ($Dev) {
+    Write-Host "   [모드: 비공개 개발 레포 (snorkl-rubric-architect-dev)]" -ForegroundColor Magenta
+}
 
 # 1. Check Git
 if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
@@ -26,7 +39,7 @@ if (Test-Path "$InstallDir\.git") {
     git -C "$InstallDir" fetch origin main
     git -C "$InstallDir" reset --hard origin/main
 } else {
-    Write-Host "▶ GitHub에서 최신 스킬을 다운로드합니다..." -ForegroundColor Yellow
+    Write-Host "▶ 저장소에서 최신 스킬을 다운로드합니다 ($RepoUrl)..." -ForegroundColor Yellow
     if (Test-Path "$InstallDir") { Remove-Item -Recurse -Force "$InstallDir" }
     git clone --depth=1 "$RepoUrl" "$InstallDir"
 }
@@ -42,9 +55,9 @@ if (Get-Command python -ErrorAction SilentlyContinue) {
 $EdgePath1 = "$env:ProgramFiles(x86)\Microsoft\Edge\Application\msedge.exe"
 $EdgePath2 = "$env:ProgramFiles\Microsoft\Edge\Application\msedge.exe"
 if ((Test-Path $EdgePath1) -or (Test-Path $EdgePath2)) {
-    Write-Host "  ✓ Microsoft Edge: 고해상도 헤드리스 렌더러 지원 확인" -ForegroundColor Green
+    Write-Host "  ✓ Microsoft Edge: 고해상도 헤드리스 렌더러 및 PDF 인쇄 지원 확인" -ForegroundColor Green
 } else {
-    Write-Host "  ⚠ Microsoft Edge를 찾을 수 없습니다. (기본 브라우저 사용)" -ForegroundColor Yellow
+    Write-Host "  ⚠ Microsoft Edge를 찾을 수 없습니다. (Google Chrome 확인 권장)" -ForegroundColor Yellow
 }
 
 # 4. Link to Agent Skill Directories (Junction on Windows works without admin rights)
@@ -57,7 +70,6 @@ function Create-AgentLink($AgentName, $TargetPath) {
     $ParentDir = Split-Path $TargetPath -Parent
     if (-not (Test-Path $ParentDir)) { New-Item -ItemType Directory -Path $ParentDir -Force | Out-Null }
     if (Test-Path $TargetPath) {
-        # Check if already junction/symlink or folder
         cmd /c rmdir "$TargetPath" 2>$null
         if (Test-Path $TargetPath) { Remove-Item -Recurse -Force "$TargetPath" }
     }
@@ -86,11 +98,9 @@ $UpdateScript = @"
 echo ▶ Snorkl Rubric Architect 업데이트 확인 중...
 git -C "%USERPROFILE%\.snorkl-rubric-architect" pull --ff-only origin main
 echo ✓ 최신 버전으로 업데이트되었습니다.
-pause
 "@
 Set-Content -Path "$BinDir\snorkl-update.cmd" -Value $UpdateScript -Encoding Ascii
 
-# Add to user PATH if not present
 $UserPath = [Environment]::GetEnvironmentVariable("Path", "User")
 if ($UserPath -notlike "*$BinDir*") {
     [Environment]::SetEnvironmentVariable("Path", "$UserPath;$BinDir", "User")
