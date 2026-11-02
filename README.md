@@ -1,63 +1,82 @@
-# Snorkl Rubric Architect 📐✨
+# Snorkl Rubric Architect 📐✨ (v13.0)
 
 > **Snorkl(스노클) 수학 서논술형 문항 캔버스 및 AI 4단계 정밀 루브릭 설계 시스템**  
-> Claude Code, Google Antigravity / Gemini, OpenAI Codex, Aside 등 모든 주요 AI 에이전트에서 동작하는 통합 수학 문항 저작 스킬입니다.
+> Windows 및 macOS를 모두 지원하며, Claude Code, Google Antigravity, OpenAI Codex, Aside 등 모든 주요 AI 에이전트에서 동작하는 크로스 플랫폼 수학 문항 저작 스킬입니다.
 
-[![Skill Standard](https://img.shields.io/badge/Agent_Skill-v1.0-blue.svg)](https://github.com/getbetterwithu/snorkl-rubric-architect)
-[![Platform](https://img.shields.io/badge/Platform-macOS_%7C_Claude_%7C_Gemini_%7C_Codex-green.svg)](https://github.com/getbetterwithu/snorkl-rubric-architect)
+[![Skill Standard](https://img.shields.io/badge/Agent_Skill-v13.0-blue.svg)](https://github.com/getbetterwithu/snorkl-rubric-architect)
+[![Platform](https://img.shields.io/badge/Platform-Windows_%7C_macOS_%7C_Claude_%7C_Gemini_%7C_Codex-green.svg)](https://github.com/getbetterwithu/snorkl-rubric-architect)
 [![License](https://img.shields.io/badge/License-MIT-orange.svg)](LICENSE)
 
 ---
 
-## 🚀 1초 원클릭 설치 (터미널)
+## 🚀 1초 원클릭 설치 (터미널 / PowerShell)
 
-터미널을 열고 아래 명령어를 붙여넣으면, Mac에 설치된 **Claude Code, Gemini/Antigravity, Codex, Aside**를 자동으로 감지하여 모든 도구에 스킬을 즉시 연동합니다:
+사용하시는 운영체제(OS)에 맞춰 아래 한 줄 명령어를 복사해 터미널 또는 PowerShell에 붙여넣으세요:
 
+### 🪟 Windows (PowerShell)
+```powershell
+irm https://raw.githubusercontent.com/getbetterwithu/snorkl-rubric-architect/main/install.ps1 | iex
+```
+
+### 🍎 macOS / Linux (Terminal)
 ```bash
 curl -fsSL https://raw.githubusercontent.com/getbetterwithu/snorkl-rubric-architect/main/install.sh | bash
 ```
 
-설치가 완료되면 터미널 어디서든 최신 버전으로 업데이트할 수 있는 `snorkl-update` 명령어가 등록됩니다:
+> **설치 동작**: Mac 및 Windows에 설치된 **Claude Code, Gemini/Antigravity, Codex, Aside**를 자동 감지하여 모든 에이전트 경로에 스킬을 즉시 연동하고, 최신 업데이트 명령어(`snorkl-update`)를 등록합니다.
+
+---
+
+## 🔄 원클릭 업데이트
+
+터미널이나 PowerShell 어디서든 아래 한 줄로 최신 버전으로 즉시 갱신할 수 있습니다:
 ```bash
 snorkl-update
 ```
 
 ---
 
-## 💡 주요 기능 및 핵심 가치
+## 💡 v13.0 핵심 가치 및 주요 기능
 
-### 1. 양방향 서논술형 문항 승격 파이프라인
-- **이미지만 제공 시**: 교과서/문제집 사진(단순 계산형 문제)을 분석하여, '수학적 정당화', '조건 변경', '증명 과정 단계화'를 유도하는 고수준 서논술형 문항으로 자동 제안 및 변형.
-- **텍스트만 제공 시**: 지문 내용을 파악하여 학생들이 직관적으로 이해할 수 있는 최적의 기하 벡터 도형 작도를 선제 제안.
+### 1. 전 단계 진행 상황 가시화 (Progress Indicator)
+- 처음 사용하는 선생님도 길을 잃지 않도록, 매 턴 첫 줄에 `[전체 4단계 중 M단계 진행 중: 단계명]`을 명시하여 현재 위치와 완결까지의 여정을 명확히 안내합니다.
 
-### 2. 한국 교과서 표준 기하 그래픽 엔진 (v12.0)
-- **교과서 규격 순수 원호 치수선(Circular Arc)**: 선분의 두 꼭짓점을 현으로 삼아 $8\sim 16\text{px}$의 은은하고 일정한 활꼴 높이(Sagitta)를 유지하며, 왜곡 없는 진원호로 렌더링.
-- **올록볼록 구름형 불투명 클라우드 마스크(Cloud-masked Label)**:
-  - 글자 내부(숫자 사이, 띄어쓰기 공백, 내부 루프)는 $100\%$ 불투명 순백색으로 밀폐하여 뒤쪽 치수선 누출을 원천 차단.
-  - 외부 윤곽은 글자 곡선을 따라 몽실몽실 올록볼록하게 이어지는 구름 형태로 자연스럽게 마스킹.
-  - 소문자 윗줄($x, y, c, m$) $100\%$ 수평 일직선 정렬.
-- **삼각함수 기반 내각 호(Angle Arc)**: 꼭짓점을 중심 원점으로 삼아 두 변에 $100\%$ 오차 없이 밀착하는 동심원호 작도 및 각의 이등분선 레이블 배치.
-- **수학 타이포그래피**: 꼭짓점 영문 대문자 로만체 볼드(`Times New Roman Bold`), 변수 이탤릭($x, y$), 단위 직립 로만체($\text{cm}$), 선분 기호 밀착(`\overline{\mathrm{AB}}`).
+### 2. 비재촉형 정중한 검토 유도 톤앤매너
+- AI가 일방적으로 다음 단계로 서둘러 넘어가려 하지 않고, 각 단계마다 충분히 살펴보고 의견을 주실 수 있도록 정중히 초대합니다.
+- *"내용을 살펴보시고 틀린 점, 개선해야 할 점, 의견이 있으시면 편하게 말씀해 주세요. 없으시면 '다음'(또는 '좋아')이라고 말씀해 주시면 다음 단계로 진행하겠습니다."*
 
-### 3. Snorkl AI 채점 신빙성 보장 4단계 루브릭
-- **4점 만점 체계**: 1단계(핵심 성질 발견) $\rightarrow$ 2단계(방정식/비례식 수립) $\rightarrow$ 3단계(계산 및 중간 결론) $\rightarrow$ 4단계(최종 결론 및 정당화) 각 1점 배분.
-- **0.5점 정밀 부분점수 원칙**: 계산 실수나 근거 누락 시 0점 감점 대신 0.5점을 인정하는 명확한 기준 수립.
-- **다중 풀이(Alternative Solutions) 완벽 대응**: 학생들이 시도할 수 있는 보조선, 닮음비 치환, 대수적 접근법을 최대 3개까지 병렬 루브릭으로 설계.
-- **AI 억지감점 방지 10대 가드레일**: 교과서 특정 용어 누락에 의한 감점 방지, 시각적 추정에 대한 엄격한 0점 처리 등.
+### 3. 문항 유형별 스마트 분기 (도형 vs 순수 대수)
+- **기하/도형 문항**: KaTeX 지문과 교과서 표준 순수 원호 치수선, 올록볼록 클라우드 마스크가 적용된 2000×1000 고화질 기하 카드를 작도합니다.
+- **순수 대수/방정식 문항**: 억지로 오른쪽 영역에 무언가를 채우려다 풀이나 힌트를 노출하는 오류를 원천 차단하고, 지문이 카드 전체 폭을 채우는 와이드 지문 카드를 구성하거나 지문 확정 후 즉시 루브릭 설계로 직행합니다.
+
+### 4. 크로스 플랫폼 자동 뷰어 팝업 (Windows & macOS)
+- **macOS**: Swift 기반 WebKit 렌더러로 고화질 카드를 생성한 즉시 `open` 명령어로 `미리보기(Preview.app)` 창을 화면에 자동 띄웁니다.
+- **Windows**: Windows 기본 탑재 `Microsoft Edge(msedge.exe)` 헤드리스 렌더러로 카드를 생성한 즉시 `os.startfile()`로 기본 사진 뷰어를 화면에 자동 띄웁니다.
+- 터미널이나 VS Code의 CSP 제한으로 채팅창에 이미지가 안 보이는 문제를 원천 해결합니다.
+
+### 5. 스노클 붙여넣기용 순수 텍스트 루브릭 (LaTeX 100% 배제)
+- 스노클(Snorkl) 웹 시스템은 `$...$`, `$$...$$`, `\boxed{}` 등 LaTeX 문법을 렌더링하지 못하므로, **최종 복사용 루브릭은 키보드 및 표준 유니코드 기반의 순수 일반 텍스트(Plain Text)로만 작성**하여 스노클에 붙여넣었을 때 원문 코드가 깨져 보이지 않습니다.
+
+### 6. 직관적 파일명 및 `./snorkl_output/` 영구 세트 저장
+- `problem_b_final.md` 같은 기계적 명칭을 전면 금지하고, `중2_연립일차방정식_공통해.md`처럼 문제의 단원과 내용이 드러나는 파일명으로 현재 작업 경로의 `./snorkl_output/`에 마크다운과 이미지를 나란히 한 세트로 영구 저장합니다.
+
+### 7. 교사 커스텀 답안 반영 옵션 (Step 3)
+- AI가 기본 초안을 먼저 주되, 선생님만의 모범답안 텍스트나 손풀이 사진을 보내주시면 그 호흡에 맞춰 4단계 배점표(0.5점 기준)를 재구성해 드립니다.
+
+### 8. 스노클 교사 대시보드 바로가기 링크 제공
+- 작업 완료 시 곧바로 스노클로 이동해 과제를 배부할 수 있도록 `[Snorkl 교사 대시보드 바로가기](https://teacher.snorkl.app/home)` 링크를 안내합니다.
 
 ---
 
-## 🏛️ 점진적 4단계 인터랙션 워크플로우
-
-스킬이 실행되면 일방적으로 긴 텍스트를 쏟아내지 않고, 교사와 함께 문항과 평가 기준을 한 단계씩 완성해 나갑니다:
+## 🏛️ 4단계 점진적 인터랙션 워크플로우
 
 ```mermaid
 flowchart TD
-    In["교사의 입력 접수 (이미지 / 텍스트 / 아이디어)"] --> Step1["[Step 1] 심층 분석 & 고수준 서논술형/도형 제안"]
-    Step1 -->|교사의 방향 선택 및 합의| Step2["[Step 2] KaTeX+WebKit 마스터 캔버스 시각적 렌더링 & 검토"]
-    Step2 -->|교사 피드백/승인| Step3["[Step 3] 기본 모범답안 & 4단계 배점표(0.5점 조건) 검토"]
-    Step3 -->|교사 피드백/승인| Step4["[Step 4] 다른 풀이(1, 2) & 공통 채점원칙 가드레일 검토"]
-    Step4 -->|최종 승인| Final["[최종 완결] 스노클 복사용 통합 텍스트 & 고화질 다운로드 제공"]
+    In["교사의 입력 접수 (이미지 / 텍스트 / 아이디어)"] --> Step1["[전체 4단계 중 1단계: 심층 분석 & 출제 방향 제안]"]
+    Step1 -->|교사의 방향 선택 및 합의| Step2["[전체 4단계 중 2단계: 문제 화면(캔버스) 검토]"]
+    Step2 -->|교사 검토 및 승인 ('다음')| Step3["[전체 4단계 중 3단계: 기본 모범답안 & 4단계 배점표 검토]"]
+    Step3 -->|교사 검토 및 승인 ('다음')| Step4["[전체 4단계 중 4단계: 다른 풀이 & 공통 채점 원칙 검토]"]
+    Step4 -->|최종 승인 ('다음'/'완료')| Final["[최종 완결: snorkl_output/ 저장 & 스노클 링크 제공]"]
 ```
 
 ---
@@ -66,21 +85,23 @@ flowchart TD
 
 ```
 snorkl-rubric-architect/
-├── SKILL.md                          # 에이전트 공용 프롬프트 및 지침
-├── install.sh                        # 원클릭 멀티 에이전트 설치 & 업데이트 스크립트
+├── SKILL.md                          # 에이전트 공용 프롬프트 및 지침 (v13.0)
+├── install.sh                        # macOS / Linux 원클릭 설치 스크립트
+├── install.ps1                       # Windows PowerShell 원클릭 설치 스크립트
 ├── publish.sh                        # 듀얼 레포 동기화 배포 스크립트
 ├── README.md                         # 사용자 안내 문서
 └── scripts/
     ├── template_card.html            # KaTeX 2000x1000 캔버스 마스터 HTML 템플릿
     ├── snorkl_geometry_engine.py     # 기하 벡터 그래픽 및 클라우드 마스크 엔진
-    └── render_webkit.swift           # 무손실 WebKit 고화질 PNG 렌더러
+    ├── render_card.py                # Windows(Edge) & macOS(WebKit) 통합 크로스 플랫폼 렌더러
+    └── render_webkit.swift           # macOS 무손실 WebKit 고속 렌더러
 ```
 
 ---
 
 ## 🛠️ 지원 환경
 
-- **OS**: macOS (WebKit 헤드리스 렌더링 및 Swift 컴파일러 내장 지원)
+- **OS**: Windows 10/11 (Microsoft Edge 기본 탑재), macOS (WebKit 지원)
 - **AI 에이전트**:
   - Google Antigravity / Gemini CLI (`~/.gemini/config/skills/`)
   - Anthropic Claude Code (`~/.claude/skills/`)
