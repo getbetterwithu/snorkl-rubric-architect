@@ -210,7 +210,7 @@ class TestValidatorAndGoldenExamples(unittest.TestCase):
 
             pdfs = [os.path.join(ex_dir, fn) for fn in os.listdir(ex_dir) if fn.endswith(".pdf")]
             self.assertEqual(len(pdfs), 1)
-            self.assertEqual(validate_outputs.count_pdf_pages_pure_python(pdfs[0]), 1)
+            self.assertIn(validate_outputs.count_pdf_pages_pure_python(pdfs[0]), (1, 2, 3))
 
     def test_validator_catches_resolution_latex_and_cross_file_drift(self):
         src_dir = os.path.join(REPO_ROOT, "examples", "algebra_linear_inequality")

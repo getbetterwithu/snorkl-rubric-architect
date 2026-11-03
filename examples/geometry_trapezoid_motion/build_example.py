@@ -168,6 +168,6 @@ def make_spec() -> ProblemSpec:
 
 
 if __name__ == "__main__":
-    paths = build_all_outputs(make_spec(), EXAMPLE_DIR, max_pdf_pages=1, validate=True)
+    paths = build_all_outputs(make_spec(), EXAMPLE_DIR, max_pdf_pages=3, validate=True)
     for k, v in paths.items():
         print(f"{k}: {v}")

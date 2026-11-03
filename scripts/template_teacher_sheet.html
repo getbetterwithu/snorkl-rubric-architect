@@ -9,7 +9,7 @@
   <style>
     @page {
       size: A4 portrait;
-      margin: 8.5mm 11mm 8.5mm 11mm;
+      margin: 10mm 12mm 10mm 12mm;
     }
     * { box-sizing: border-box; }
     body {
@@ -18,8 +18,8 @@
       background: #FFFFFF;
       margin: 0;
       padding: 0;
-      font-size: 11px;
-      line-height: 1.48;
+      font-size: 11.2px;
+      line-height: 1.5;
       word-break: keep-all;
       overflow-wrap: break-word;
     }
@@ -49,27 +49,30 @@
       white-space: nowrap;
     }
     .section-title {
-      font-size: 13px;
+      font-size: 13.5px;
       font-weight: 700;
       color: #1E293B;
       border-left: 3px solid #0284C7;
-      padding-left: 6px;
-      margin: 8px 0 5px 0;
+      padding-left: 7px;
+      margin: 10px 0 6px 0;
       letter-spacing: -0.2px;
       page-break-after: avoid;
+      break-after: avoid;
     }
     .card-preview-container {
       text-align: center;
-      margin-bottom: 6px;
+      margin-bottom: 10px;
       page-break-inside: avoid;
+      break-inside: avoid;
     }
     .card-preview {
-      width: auto;
+      width: 100%;
       max-width: 100%;
-      max-height: 145px;
+      max-height: 270px;
+      height: auto;
       object-fit: contain;
-      border: 1px solid #CBD5E1;
-      border-radius: 6px;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 8px;
       background: #FFFFFF;
       display: block;
       margin: 0 auto;
@@ -78,21 +81,23 @@
       background: #F8FAFC;
       border: 1px solid #E2E8F0;
       border-radius: 6px;
-      padding: 7px 11px;
-      margin-bottom: 7px;
-      font-size: 11px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      font-size: 11.2px;
       page-break-inside: avoid;
+      break-inside: avoid;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 5px 0 8px 0;
-      font-size: 10.8px;
+      margin: 6px 0 9px 0;
+      font-size: 11px;
       page-break-inside: avoid;
+      break-inside: avoid;
     }
     th, td {
       border: 1px solid #CBD5E1;
-      padding: 4.5px 7px;
+      padding: 5.5px 8px;
       text-align: left;
       vertical-align: top;
     }
@@ -108,16 +113,30 @@
       background: #FFFFFF;
       border: 1px solid #E2E8F0;
       border-radius: 6px;
-      padding: 7px 11px;
-      margin-bottom: 7px;
-      font-size: 10.8px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      font-size: 11px;
       page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .alt-solution-section {
+      margin-bottom: 12px;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .alt-solution-section:last-child {
+      margin-bottom: 0;
     }
     .guardrails-box {
       background: #F8FAFC;
       border: 1px solid #E2E8F0;
       border-radius: 6px;
-      padding: 6px 11px;
+      padding: 7px 12px;
+      font-size: 10.5px;
+      color: #334155;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
       font-size: 10.3px;
       color: #334155;
       page-break-inside: avoid;

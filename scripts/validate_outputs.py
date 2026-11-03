@@ -180,9 +180,10 @@ def validate_deliverable_set(
     pdf_path: str,
     card_html_path: str | None = None,
     sheet_html_path: str | None = None,
-    max_pdf_pages: int = 1,
+    max_pdf_pages: int = 3,
     check_dom: bool = True,
     require_html: bool = True,
+    txt_path: str | None = None,
 ) -> tuple[bool, list[str]]:
     errors: list[str] = []
 
@@ -236,6 +237,19 @@ def validate_deliverable_set(
                     errors.append(f"Required section `{marker}` missing from Snorkl MD.")
             if "가드레일" not in md_text and "공통 채점" not in md_text:
                 errors.append("Required common grading principles section (`[공통 채점 ...]`) missing from Snorkl MD.")
+
+    # 2-1. Validate Snorkl Plain-Text TXT (`.txt`) parity if provided
+    if txt_path:
+        if not os.path.isfile(txt_path):
+            errors.append(f"Snorkl TXT file missing: {txt_path}")
+        else:
+            try:
+                with open(txt_path, "r", encoding="utf-8") as f:
+                    txt_text = f.read()
+                if txt_text != md_text:
+                    errors.append(f"Parity mismatch: Snorkl TXT text differs from MD text: {txt_path}")
+            except UnicodeDecodeError as e:
+                errors.append(f"Snorkl TXT is not valid UTF-8: {e}")
 
     md_stem = extract_md_section(md_text, "[문항") if md_text else ""
     md_answer = extract_md_section(md_text, "[정답") if md_text else ""
@@ -436,11 +450,12 @@ def validate_deliverable_set(
     return len(errors) == 0, errors
 
 
-def _discover_paths_in_dir(directory: str, slug: str | None = None) -> tuple[str, str, str, str | None, str | None]:
+def _discover_paths_in_dir(directory: str, slug: str | None = None) -> tuple[str, str, str, str | None, str | None, str | None]:
     d = os.path.abspath(directory)
     if slug:
         png = os.path.join(d, f"{slug}_문제등록화면.png")
         md = os.path.join(d, f"{slug}_정답_평가기준.md")
+        txt = os.path.join(d, f"{slug}_정답_평가기준.txt")
         pdf = os.path.join(d, f"{slug}_교사참고용_채점기준표.pdf")
         c_html = os.path.join(d, f"{slug}_card.html")
         s_html = os.path.join(d, f"{slug}_sheet.html")
@@ -448,6 +463,7 @@ def _discover_paths_in_dir(directory: str, slug: str | None = None) -> tuple[str
             png,
             md,
             pdf,
+            txt if os.path.isfile(txt) else None,
             c_html if os.path.isfile(c_html) else None,
             s_html if os.path.isfile(s_html) else None,
         )
@@ -462,12 +478,14 @@ def _discover_paths_in_dir(directory: str, slug: str | None = None) -> tuple[str
             "Pass --slug <문제제목> to disambiguate."
         )
     inferred_slug = os.path.basename(pngs[0])[: -len("_문제등록화면.png")]
+    txt = os.path.join(d, f"{inferred_slug}_정답_평가기준.txt")
     c_html = os.path.join(d, f"{inferred_slug}_card.html")
     s_html = os.path.join(d, f"{inferred_slug}_sheet.html")
     return (
         pngs[0],
         mds[0],
         pdfs[0],
+        txt if os.path.isfile(txt) else None,
         c_html if os.path.isfile(c_html) else None,
         s_html if os.path.isfile(s_html) else None,
     )
@@ -475,20 +493,20 @@ def _discover_paths_in_dir(directory: str, slug: str | None = None) -> tuple[str
 
 def main(argv: list[str] | None = None) -> int:
     ensure_utf8_stdio()
-    parser = argparse.ArgumentParser(description="Validate Snorkl Rubric Architect 3-file deliverable set.")
+    parser = argparse.ArgumentParser(description="Validate Snorkl Rubric Architect 4-file deliverable set.")
     parser.add_argument("target_dir", help="Directory containing generated deliverables")
     parser.add_argument("--slug", default=None, help="Problem filename prefix (optional if 1 set in folder)")
-    parser.add_argument("--max-pages", type=int, default=1, help="Max allowed PDF pages (default: 1)")
+    parser.add_argument("--max-pages", type=int, default=3, help="Max allowed PDF pages (default: 3)")
     parser.add_argument("--skip-dom", action="store_true", help="Skip headless browser DOM audit")
     parser.add_argument(
         "--allow-missing-html",
         action="store_true",
-        help="Allow validating standalone PNG/MD/PDF without `_card.html` and `_sheet.html`",
+        help="Allow validating standalone PNG/MD/TXT/PDF without `_card.html` and `_sheet.html`",
     )
     args = parser.parse_args(argv)
 
     try:
-        png, md, pdf, c_html, s_html = _discover_paths_in_dir(args.target_dir, args.slug)
+        png, md, pdf, txt, c_html, s_html = _discover_paths_in_dir(args.target_dir, args.slug)
     except Exception as e:
         print(f"[Validator Error] {e}", file=sys.stderr)
         return 1
@@ -497,6 +515,7 @@ def main(argv: list[str] | None = None) -> int:
         png_path=png,
         md_path=md,
         pdf_path=pdf,
+        txt_path=txt,
         card_html_path=c_html,
         sheet_html_path=s_html,
         max_pdf_pages=args.max_pages,

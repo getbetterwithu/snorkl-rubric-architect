@@ -58,6 +58,9 @@ class AltSolution:
     process_plain: str
     mapping_latex: str
     mapping_plain: str
+    criteria: list[CriterionRow] = field(default_factory=list)
+    score_levels_plain: list[str] = field(default_factory=list)
+    score_levels_latex: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -392,6 +395,13 @@ def build_snorkl_markdown(spec: ProblemSpec, out_md_path: str) -> str:
     return out_abs
 
 
+def build_snorkl_txt(spec: ProblemSpec, out_txt_path: str) -> str:
+    """Generate the Snorkl Plain-Text Rubric `.txt` file (identical UTF-8 plain text for Notepad/HWP)."""
+    out_abs = os.path.abspath(out_txt_path)
+    # Re-use build_snorkl_markdown implementation to guarantee 100% text parity
+    return build_snorkl_markdown(spec, out_abs)
+
+
 def build_teacher_sheet_html(spec: ProblemSpec, card_png_path: str, out_html_path: str) -> str:
     """Generate the Teacher Reference A4 HTML (with portable local KaTeX & card preview href)."""
     validate_spec_consistency(spec)
@@ -451,19 +461,59 @@ def build_teacher_sheet_html(spec: ProblemSpec, card_png_path: str, out_html_pat
     )
 
     if spec.alt_solutions:
-        alt_items = []
+        alt_blocks = []
+        has_table_alt = any(bool(alt.criteria) for alt in spec.alt_solutions)
         for idx, alt in enumerate(spec.alt_solutions, start=1):
-            alt_items.append(
-                f'<div style="margin-bottom: 4px;">'
-                f"<strong>별해 {idx} ({html.escape(alt.title)})</strong>: {alt.process_latex} "
-                f"<span style=\"color:#0369A1;\">➔ [인정 기준] {alt.mapping_latex}</span></div>"
+            if alt.criteria:
+                alt_rows = []
+                for row in alt.criteria:
+                    alt_rows.append(
+                        "      <tr>\n"
+                        f"        <td><strong>{html.escape(row.stage)}</strong></td>\n"
+                        f"        <td>{row.full_latex}</td>\n"
+                        f"        <td>{row.edge_note_latex}</td>\n"
+                        "      </tr>"
+                    )
+                alt_levels_src = alt.score_levels_latex if alt.score_levels_latex else [html.escape(s) for s in alt.score_levels_plain]
+                alt_levels_inline = " / ".join(alt_levels_src)
+                alt_blocks.append(
+                    f'<div class="alt-solution-section">\n'
+                    f'  <div style="margin-bottom: 5px; font-weight: 700; color: #0369A1;">별해 {idx} ({html.escape(alt.title)})</div>\n'
+                    f'  <div class="info-box" style="margin-bottom: 6px;"><strong>[별해 풀이 과정]</strong> {alt.process_latex}</div>\n'
+                    f'  <table>\n'
+                    f'    <thead>\n'
+                    f'      <tr>\n'
+                    f'        <th class="th-stage">성취 요소</th>\n'
+                    f'        <th class="th-full">충족 기준 (필기·도형·음성 통합)</th>\n'
+                    f'        <th class="th-partial">감점·오류 이월 및 경계 처리</th>\n'
+                    f'      </tr>\n'
+                    f'    </thead>\n'
+                    f'    <tbody>\n'
+                    + "\n".join(alt_rows)
+                    + "\n    </tbody>\n"
+                    f'  </table>\n'
+                    f'  <div class="info-box" style="padding: 5px 10px; font-size: 10.4px;">'
+                    f'<strong>[0~4점 정수 매핑]</strong> {alt_levels_inline}</div>\n'
+                    f'</div>'
+                )
+            else:
+                alt_blocks.append(
+                    f'<div style="margin-bottom: 4px;">'
+                    f"<strong>별해 {idx} ({html.escape(alt.title)})</strong>: {alt.process_latex} "
+                    f"<span style=\"color:#0369A1;\">➔ [인정 기준] {alt.mapping_latex}</span></div>"
+                )
+        if has_table_alt:
+            blocks.append(
+                '<div class="section-title">3. 다른 풀이(별해) 상세 채점 기준표</div>\n'
+                + "\n  ".join(alt_blocks)
             )
-        blocks.append(
-            '<div class="section-title">3. 다른 풀이 및 대체 인정 기준</div>\n'
-            '  <div class="alt-solutions-box">\n    '
-            + "\n    ".join(alt_items)
-            + "\n  </div>"
-        )
+        else:
+            blocks.append(
+                '<div class="section-title">3. 다른 풀이 및 대체 인정 기준</div>\n'
+                '  <div class="alt-solutions-box">\n    '
+                + "\n    ".join(alt_blocks)
+                + "\n  </div>"
+            )
         guardrail_sec_no = 4
     else:
         guardrail_sec_no = 3
@@ -502,12 +552,13 @@ def build_teacher_sheet_html(spec: ProblemSpec, card_png_path: str, out_html_pat
 def build_all_outputs(
     spec: ProblemSpec,
     out_dir: str,
-    max_pdf_pages: int = 1,
+    max_pdf_pages: int = 3,
     validate: bool = True,
 ) -> dict[str, str]:
     """
-    Build, render, and optionally validate all 3 deliverables from a single `ProblemSpec`.
+    Build, render, and optionally validate the 4 official deliverables from a single `ProblemSpec`.
     Raises `RuntimeError` immediately if rendering or validation fails.
+    Deliverables for Teachers: PNG, TXT, MD, PDF (HTML files are internal build intermediates).
     """
     out_abs = os.path.abspath(out_dir)
     os.makedirs(out_abs, exist_ok=True)
@@ -516,6 +567,7 @@ def build_all_outputs(
     card_html = os.path.join(out_abs, f"{slug}_card.html")
     card_png = os.path.join(out_abs, f"{slug}_문제등록화면.png")
     rubric_md = os.path.join(out_abs, f"{slug}_정답_평가기준.md")
+    rubric_txt = os.path.join(out_abs, f"{slug}_정답_평가기준.txt")
     sheet_html = os.path.join(out_abs, f"{slug}_sheet.html")
     sheet_pdf = os.path.join(out_abs, f"{slug}_교사참고용_채점기준표.pdf")
 
@@ -524,6 +576,7 @@ def build_all_outputs(
         raise RuntimeError(f"Failed to render problem card PNG: {card_png}")
 
     build_snorkl_markdown(spec, rubric_md)
+    build_snorkl_txt(spec, rubric_txt)
     build_teacher_sheet_html(spec, card_png, sheet_html)
     if not render_pdf(sheet_html, sheet_pdf):
         raise RuntimeError(f"Failed to render teacher sheet PDF: {sheet_pdf}")
@@ -532,6 +585,7 @@ def build_all_outputs(
         "card_html": card_html,
         "card_png": card_png,
         "rubric_md": rubric_md,
+        "rubric_txt": rubric_txt,
         "sheet_html": sheet_html,
         "sheet_pdf": sheet_pdf,
     }
@@ -543,6 +597,7 @@ def build_all_outputs(
             png_path=card_png,
             md_path=rubric_md,
             pdf_path=sheet_pdf,
+            txt_path=rubric_txt,
             card_html_path=card_html,
             sheet_html_path=sheet_html,
             max_pdf_pages=max_pdf_pages,
