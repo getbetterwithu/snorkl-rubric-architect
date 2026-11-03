@@ -554,6 +554,7 @@ def build_all_outputs(
     out_dir: str,
     max_pdf_pages: int = 3,
     validate: bool = True,
+    keep_html: bool = False,
 ) -> dict[str, str]:
     """
     Build, render, and optionally validate the 4 official deliverables from a single `ProblemSpec`.
@@ -581,15 +582,6 @@ def build_all_outputs(
     if not render_pdf(sheet_html, sheet_pdf):
         raise RuntimeError(f"Failed to render teacher sheet PDF: {sheet_pdf}")
 
-    paths = {
-        "card_html": card_html,
-        "card_png": card_png,
-        "rubric_md": rubric_md,
-        "rubric_txt": rubric_txt,
-        "sheet_html": sheet_html,
-        "sheet_pdf": sheet_pdf,
-    }
-
     if validate:
         from validate_outputs import validate_deliverable_set
 
@@ -601,9 +593,28 @@ def build_all_outputs(
             card_html_path=card_html,
             sheet_html_path=sheet_html,
             max_pdf_pages=max_pdf_pages,
+            require_html=True,
         )
         if not ok:
             joined = "\n  - ".join(errors)
             raise RuntimeError(f"Output validation failed:\n  - {joined}")
+
+    if not keep_html:
+        for p in (card_html, sheet_html):
+            try:
+                if os.path.isfile(p):
+                    os.remove(p)
+            except OSError:
+                pass
+
+    paths = {
+        "card_png": card_png,
+        "rubric_md": rubric_md,
+        "rubric_txt": rubric_txt,
+        "sheet_pdf": sheet_pdf,
+    }
+    if keep_html:
+        paths["card_html"] = card_html
+        paths["sheet_html"] = sheet_html
 
     return paths

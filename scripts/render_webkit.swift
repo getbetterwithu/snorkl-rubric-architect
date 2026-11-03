@@ -13,6 +13,12 @@ let width = CommandLine.arguments.count >= 4 ? (Double(CommandLine.arguments[3])
 let height = CommandLine.arguments.count >= 5 ? (Double(CommandLine.arguments[4]) ?? 500.0) : 500.0
 
 let app = NSApplication.shared
+app.setActivationPolicy(.prohibited)
+if #available(macOS 10.14, *) {
+    if let appearance = NSAppearance(named: .aqua) {
+        app.appearance = appearance
+    }
+}
 
 class RenderDelegate: NSObject, WKNavigationDelegate {
     let webView: WKWebView

@@ -21,7 +21,7 @@ def make_spec() -> ProblemSpec:
     return ProblemSpec(
         title="계수가 분수인 일차부등식의 최대 자연수 해",
         slug="일차부등식_최대자연수해",
-        category_tag="2022 개정 중2 수학 | 변화와 관계 · 일차부등식",
+        category_tag="일차부등식",
         header_latex=r"다음 일차부등식을 만족시키는 가장 큰 자연수 $x$의 값을 구하려고 한다.",
         header_plain="다음 일차부등식을 만족시키는 가장 큰 자연수 x의 값을 구하려고 한다.",
         formulas_latex=[r"\frac{2}{5}x - \frac{1}{2} > \frac{2x - 4}{3}"],
@@ -107,6 +107,6 @@ def make_spec() -> ProblemSpec:
 
 
 if __name__ == "__main__":
-    paths = build_all_outputs(make_spec(), EXAMPLE_DIR, max_pdf_pages=3, validate=True)
+    paths = build_all_outputs(make_spec(), EXAMPLE_DIR, max_pdf_pages=3, validate=True, keep_html=True)
     for k, v in paths.items():
         print(f"{k}: {v}")

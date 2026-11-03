@@ -62,7 +62,7 @@ def make_spec() -> ProblemSpec:
     return ProblemSpec(
         title="직사각형 위를 움직이는 점과 사다리꼴의 넓이",
         slug="직사각형_움직이는점_사다리꼴",
-        category_tag="2022 개정 중1 수학 | 변화와 관계 · 일차방정식의 활용",
+        category_tag="일차방정식의 활용",
         header_latex=(
             r"오른쪽 그림과 같이 $\overline{\mathrm{AD}}=15\text{ cm}$, $\overline{\mathrm{AB}}=8\text{ cm}$인 "
             r"직사각형 $\mathrm{ABCD}$에서 점 $\mathrm{P}$가 꼭짓점 $\mathrm{B}$를 출발하여 변 $\mathrm{BC}$를 따라 "
@@ -168,6 +168,6 @@ def make_spec() -> ProblemSpec:
 
 
 if __name__ == "__main__":
-    paths = build_all_outputs(make_spec(), EXAMPLE_DIR, max_pdf_pages=3, validate=True)
+    paths = build_all_outputs(make_spec(), EXAMPLE_DIR, max_pdf_pages=3, validate=True, keep_html=True)
     for k, v in paths.items():
         print(f"{k}: {v}")

@@ -343,8 +343,8 @@ class TestValidatorAndGoldenExamples(unittest.TestCase):
         self.assertFalse(ok)
         self.assertTrue(any("not A4 portrait" in e for e in errs))
 
-        # 6. Missing HTML sources -> rejected by default
-        ok, errs = validate_outputs.validate_deliverable_set(png, md, pdf, None, None, check_dom=False)
+        # 6. Missing HTML sources -> rejected when require_html=True
+        ok, errs = validate_outputs.validate_deliverable_set(png, md, pdf, None, None, check_dom=False, require_html=True)
         self.assertFalse(ok)
         self.assertTrue(any("missing" in e.lower() for e in errs))
 

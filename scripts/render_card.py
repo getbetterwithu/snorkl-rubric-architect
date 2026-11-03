@@ -258,6 +258,8 @@ def audit_dom_headless(browser: str, file_uri: str, width: int, height: int, tem
         errors="replace",
         timeout=45,
     )
+    if res.returncode in (-6, 134):
+        return False, f"DOM audit browser crashed with signal {res.returncode} (SIGABRT/sandbox abort)"
     if res.returncode != 0:
         return False, f"DOM audit browser exited with {res.returncode}: {res.stderr.strip()}"
 
@@ -384,10 +386,16 @@ def render_png(
             timeout=45,
         )
         if res.returncode != 0:
-            print(
-                f"[Renderer Error] Browser exited with non-zero code {res.returncode}: {res.stderr.strip()}",
-                file=sys.stderr,
-            )
+            if res.returncode in (-6, 134):
+                print(
+                    f"[Renderer Error] Headless browser crashed with code {res.returncode} (SIGABRT/sandbox abort).",
+                    file=sys.stderr,
+                )
+            else:
+                print(
+                    f"[Renderer Error] Browser exited with non-zero code {res.returncode}: {res.stderr.strip()}",
+                    file=sys.stderr,
+                )
             return False
 
         dims = read_png_dimensions(temp_png)
@@ -464,10 +472,16 @@ def render_pdf(html_path: str, pdf_path: str, audit_dom: bool = True) -> bool:
             timeout=45,
         )
         if res.returncode != 0:
-            print(
-                f"[Renderer Error] PDF command exited with non-zero code {res.returncode}: {res.stderr.strip()}",
-                file=sys.stderr,
-            )
+            if res.returncode in (-6, 134):
+                print(
+                    f"[Renderer Error] Headless browser crashed with code {res.returncode} (SIGABRT/sandbox abort).",
+                    file=sys.stderr,
+                )
+            else:
+                print(
+                    f"[Renderer Error] PDF command exited with non-zero code {res.returncode}: {res.stderr.strip()}",
+                    file=sys.stderr,
+                )
             return False
 
         if not os.path.isfile(temp_pdf) or os.path.getsize(temp_pdf) < 512:
