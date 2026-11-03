@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""
+r"""
 validate_outputs.py - Automated Deliverable & Cross-File Consistency Validator (v15.0)
 
 Mandatory pre-delivery gate before Step 5 completion can be declared.
@@ -98,6 +98,11 @@ def parse_pdf_pure_python(pdf_path: str) -> tuple[int | None, list[tuple[float, 
     return page_count, boxes
 
 
+def count_pdf_pages_pure_python(pdf_path: str) -> int | None:
+    pages, _ = parse_pdf_pure_python(pdf_path)
+    return pages
+
+
 def inspect_pdf(pdf_path: str) -> tuple[int | None, list[tuple[float, float]], str | None]:
     """Return `(page_count, page_sizes_pt, extracted_text_or_none)`."""
     try:
@@ -107,7 +112,7 @@ def inspect_pdf(pdf_path: str) -> tuple[int | None, list[tuple[float, float]], s
         try:
             pages = len(doc)
             boxes = [(float(doc[i].rect.width), float(doc[i].rect.height)) for i in range(pages)]
-            full_text = "\n".join(doc[i].get_text() for i in range(pages))
+            full_text = "\n".join(doc[i].get_text("text", sort=True) for i in range(pages))
             return pages, boxes, full_text
         finally:
             doc.close()
@@ -225,10 +230,12 @@ def validate_deliverable_set(
                     "Snorkl AI Explanation Score supports integer 0-4 only."
                 )
 
-            required_markers = ["[문항]", "[정답", "[기본 모범 풀이", "채점 기준", "가드레일"]
+            required_markers = ["[문항]", "[정답", "[기본 모범 풀이", "채점 기준"]
             for marker in required_markers:
                 if marker not in md_text:
                     errors.append(f"Required section `{marker}` missing from Snorkl MD.")
+            if "가드레일" not in md_text and "공통 채점" not in md_text:
+                errors.append("Required common grading principles section (`[공통 채점 ...]`) missing from Snorkl MD.")
 
     md_stem = extract_md_section(md_text, "[문항") if md_text else ""
     md_answer = extract_md_section(md_text, "[정답") if md_text else ""

@@ -2,8 +2,8 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="snorkl-spec-sha256" content="714b98a741e4d939">
-  <meta name="snorkl-final-answer" content="(1) y = 8x + 60, (2) 4초 후">
+  <meta name="snorkl-spec-sha256" content="9b9b792f4f4e4b09">
+  <meta name="snorkl-body-sha256" content="2918ad40f66b218a">
   <link rel="stylesheet" href="../../scripts/vendor/katex/katex.min.css">
   <script src="../../scripts/vendor/katex/katex.min.js"></script>
   <script src="../../scripts/vendor/katex/contrib/auto-render.min.js"></script>
@@ -91,6 +91,7 @@
     }
     .passage .katex {
       font-family: KaTeX_Main, "Times New Roman", serif;
+      white-space: nowrap;
     }
     .target-question {
       margin-top: 8px;
@@ -246,6 +247,7 @@
   <script>
     (function() {
       document.documentElement.dataset.renderStatus = 'pending';
+      document.documentElement.dataset.renderReady = 'false';
       const baseErrors = [];
       if (typeof renderMathInElement !== 'function') {
         baseErrors.push('katex_not_loaded');
@@ -264,7 +266,7 @@
         }
       }
 
-      function finalizeAudit() {
+      function finalizeAudit(markReady) {
         const errors = baseErrors.slice();
         const katexErrors = document.querySelectorAll('.katex-error');
         if (katexErrors.length > 0) {
@@ -284,25 +286,43 @@
           }
         });
 
-        const passage = document.querySelector('.passage');
-        if (passage) {
-          const fs = parseFloat(window.getComputedStyle(passage).fontSize || '20');
-          if (fs < 15.0) {
-            errors.push('font_too_small:passage(' + fs + 'px)');
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+        const checkedEls = new Set();
+        let tNode;
+        while ((tNode = walker.nextNode())) {
+          if (!tNode.nodeValue || !tNode.nodeValue.replace(/[\s\u200b-\u200d\ufeff]/g, '')) continue;
+          const rawEl = tNode.parentElement;
+          if (!rawEl) continue;
+          if (rawEl.closest('script, style, svg, .katex-mathml, .vlist-s')) continue;
+          const katexRoot = rawEl.closest('.katex');
+          const el = katexRoot || rawEl;
+          if (checkedEls.has(el)) continue;
+          checkedEls.add(el);
+          const cs = window.getComputedStyle(el);
+          if (cs.display === 'none' || cs.visibility === 'hidden') continue;
+          const fs = parseFloat(cs.fontSize || '16');
+          if (fs < 12.0) {
+            errors.push('font_too_small:' + (el.className || el.tagName) + '(' + fs + 'px)');
           }
         }
 
         document.querySelectorAll('img').forEach(function(img) {
-          if (!img.complete || img.naturalWidth === 0) {
+          if (markReady) {
+            if (!img.complete || img.naturalWidth === 0) {
+              errors.push('broken_image:' + (img.getAttribute('src') || 'unknown'));
+            }
+          } else if (img.complete && img.naturalWidth === 0) {
             errors.push('broken_image:' + (img.getAttribute('src') || 'unknown'));
           }
         });
 
         document.documentElement.dataset.renderStatus = errors.length === 0 ? 'ok' : errors.join(';');
-        document.documentElement.dataset.renderReady = 'true';
+        if (markReady) {
+          document.documentElement.dataset.renderReady = 'true';
+        }
       }
 
-      finalizeAudit();
+      finalizeAudit(false);
 
       const fontPromise = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
       const imagePromises = Array.from(document.images || []).map(function(img) {
@@ -313,7 +333,7 @@
       });
 
       Promise.all([fontPromise].concat(imagePromises)).then(function() {
-        setTimeout(finalizeAudit, 20);
+        setTimeout(function() { finalizeAudit(true); }, 20);
       });
     })();
   </script>

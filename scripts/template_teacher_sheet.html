@@ -173,7 +173,6 @@
               {left: '$$', right: '$$', display: true},
               {left: '$', right: '$', display: false}
             ],
-            output: 'html',
             throwOnError: false,
             strict: false
           });
@@ -220,19 +219,21 @@
         const checkedEls = new Set();
         let tNode;
         while ((tNode = walker.nextNode())) {
-          if (!tNode.nodeValue || !tNode.nodeValue.trim()) continue;
-          const el = tNode.parentElement;
-          if (!el || checkedEls.has(el)) continue;
-          if (el.closest('script, style, svg, .katex-mathml')) continue;
+          if (!tNode.nodeValue || !tNode.nodeValue.replace(/[\s\u200b-\u200d\ufeff]/g, '')) continue;
+          const rawEl = tNode.parentElement;
+          if (!rawEl) continue;
+          if (rawEl.closest('script, style, svg, .katex-mathml, .vlist-s')) continue;
+          const katexRoot = rawEl.closest('.katex');
+          const el = katexRoot || rawEl;
+          if (checkedEls.has(el)) continue;
           checkedEls.add(el);
           const cs = window.getComputedStyle(el);
           if (cs.display === 'none' || cs.visibility === 'hidden') continue;
           const fs = parseFloat(cs.fontSize || '11');
-          const minFs = el.closest('.katex') ? 6.5 : 9.8;
-          if (fs < minFs) {
+          if (fs < 9.8) {
             errors.push('font_too_small:' + (el.className || el.tagName) + '(' + fs + 'px)');
           }
-          if (!el.closest('.katex') && (cs.overflow === 'hidden' || cs.overflowY === 'hidden')) {
+          if (!katexRoot && (cs.overflow === 'hidden' || cs.overflowY === 'hidden')) {
             errors.push('illegal_overflow_clipping:' + (el.className || el.tagName));
           }
         }

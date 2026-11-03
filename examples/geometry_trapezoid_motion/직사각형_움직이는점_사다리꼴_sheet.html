@@ -2,8 +2,8 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="snorkl-spec-sha256" content="714b98a741e4d939">
-  <meta name="snorkl-final-answer" content="(1) y = 8x + 60, (2) 4초 후">
+  <meta name="snorkl-spec-sha256" content="9b9b792f4f4e4b09">
+  <meta name="snorkl-body-sha256" content="113e1e2bcd2e8c24">
   <title>직사각형 위를 움직이는 점과 사다리꼴의 넓이 - 교사 참고용 채점기준표</title>
   <link rel="stylesheet" href="../../scripts/vendor/katex/katex.min.css">
   <script src="../../scripts/vendor/katex/katex.min.js"></script>
@@ -160,7 +160,7 @@
 
   <div class="section-title">1. 최종 정답 및 교과서 표준 모범답안</div>
   <div class="info-box">
-    <div id="final-answer-box" data-final-answer="(1) y = 8x + 60, (2) 4초 후" style="margin-bottom: 5px;"><strong>[최종 정답 (정오 판단 기준)]</strong> (1) $y = 8x + 60$ &nbsp; (2) $4$초 후</div>
+    <div id="final-answer-box" style="margin-bottom: 5px;"><strong>[최종 정답 (정오 판단 기준)]</strong> <span id="final-answer-value">(1) $y = 8x + 60$ &nbsp; (2) $4$초 후</span></div>
     <div><strong>[기본 모범답안]</strong> (1) 직사각형 $\mathrm{ABCD}$에서 $\overline{\mathrm{AD}} \parallel \overline{\mathrm{BC}}$이므로 $\overline{\mathrm{AD}} \parallel \overline{\mathrm{BP}}$이고 $\angle\mathrm{B}=90^\circ$이므로 사각형 $\mathrm{ABPD}$는 윗변 $\overline{\mathrm{AD}}=15\text{ cm}$, 아랫변 $\overline{\mathrm{BP}}=2x\text{ cm}$, 높이 $\overline{\mathrm{AB}}=8\text{ cm}$인 사다리꼴이다. 따라서 $y = \frac{1}{2} \times (15 + 2x) \times 8 = 8x + 60$이다. (2) $y = 92$를 대입하면 $8x + 60 = 92$, $8x = 32$이므로 $x = 4$이다. 이는 $0 < x \le 7.5$를 만족하므로 출발한 지 $4$초 후이다.</div>
   </div>
 
@@ -191,12 +191,12 @@
       </tr>
       <tr>
         <td><strong>④ 최종 결론 완결 (1점)</strong></td>
-        <td>타당한 풀이·음성 근거를 바탕으로 출발한 지 $4$초 후($x = 4$)임을 명확히 답함</td>
-        <td>$0 < x \le 7.5$ 범위 확인 언급은 권장 사항이며 생략해도 감점하지 않음; 근거 없는 단답은 설명 점수 $0$점</td>
+        <td>타당한 풀이·음성 근거를 바탕으로 출발한 지 $4$초 후($x = 4$, 앞선 연산 실수 이월 시 해당 방정식의 양수 해)임을 명확히 답함</td>
+        <td>$0 < x \le 7.5$ 범위 언급 생략은 무감점; 오류 이월 시 설명 점수에서는 ④를 인정하되 정오 판단은 원 정답 기준 적용</td>
       </tr>
     </tbody>
   </table>
-  <div class="info-box" style="padding: 5px 10px; font-size: 10.4px;"><strong>[0~4점 정수 매핑]</strong> <strong>4점</strong>: ①~④ 전 요소 충족 / <strong>3점</strong>: 핵심 추론 완결 후 단순 연산 실수 1건(오류 이월) 또는 일부 서술 경미 미흡 / <strong>2점</strong>: (1)만 완결 또는 식 수립·방정식 풀이 중 2개 요소만 충족 / <strong>1점</strong>: $\overline{\mathrm{BP}}=2x$ 등 초기 조건 파악만 성공 / <strong>0점</strong>: 근거 없는 답 단독 기재 또는 무관한 응답</div>
+  <div class="info-box" style="padding: 5px 10px; font-size: 10.4px;"><strong>[0~4점 정수 매핑]</strong> <strong>4점</strong>: ①~④ 전 요소 충족 / <strong>3점</strong>: 오류 이월 포함 3개 요소 충족(한 요소 연산 실수 외 후속 일관 완결) / <strong>2점</strong>: 2개 요소 충족((1)만 완결 등) / <strong>1점</strong>: 1개 요소 충족($\overline{\mathrm{BP}}=2x$ 등 초기 조건 파악만 성공) / <strong>0점</strong>: 충족 요소 없음(근거 없는 단답 또는 무관한 응답)</div>
 
   <div class="section-title">3. 다른 풀이 및 대체 인정 기준</div>
   <div class="alt-solutions-box">
@@ -224,6 +224,7 @@
   <script>
     (function() {
       document.documentElement.dataset.renderStatus = 'pending';
+      document.documentElement.dataset.renderReady = 'false';
       const baseErrors = [];
       if (typeof renderMathInElement !== 'function') {
         baseErrors.push('katex_not_loaded');
@@ -242,7 +243,7 @@
         }
       }
 
-      function finalizeAudit() {
+      function finalizeAudit(markReady) {
         const errors = baseErrors.slice();
         const katexErrors = document.querySelectorAll('.katex-error');
         if (katexErrors.length > 0) {
@@ -257,17 +258,17 @@
         }
 
         document.querySelectorAll('img').forEach(function(img) {
-          if (!img.complete || img.naturalWidth === 0) {
+          if (markReady) {
+            if (!img.complete || img.naturalWidth === 0) {
+              errors.push('broken_image:' + (img.getAttribute('src') || 'unknown'));
+            }
+          } else if (img.complete && img.naturalWidth === 0) {
             errors.push('broken_image:' + (img.getAttribute('src') || 'unknown'));
           }
         });
 
         document.querySelectorAll('body, table, .info-box, .alt-solutions-box, .guardrails-box').forEach(function(el) {
           const cs = window.getComputedStyle(el);
-          const fs = parseFloat(cs.fontSize || '11');
-          if (fs < 9.5) {
-            errors.push('font_too_small:' + (el.className || el.tagName) + '(' + fs + 'px)');
-          }
           if (cs.overflow === 'hidden' || cs.overflowY === 'hidden') {
             errors.push('illegal_overflow_clipping:' + (el.className || el.tagName));
           }
@@ -276,11 +277,36 @@
           }
         });
 
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+        const checkedEls = new Set();
+        let tNode;
+        while ((tNode = walker.nextNode())) {
+          if (!tNode.nodeValue || !tNode.nodeValue.replace(/[\s\u200b-\u200d\ufeff]/g, '')) continue;
+          const rawEl = tNode.parentElement;
+          if (!rawEl) continue;
+          if (rawEl.closest('script, style, svg, .katex-mathml, .vlist-s')) continue;
+          const katexRoot = rawEl.closest('.katex');
+          const el = katexRoot || rawEl;
+          if (checkedEls.has(el)) continue;
+          checkedEls.add(el);
+          const cs = window.getComputedStyle(el);
+          if (cs.display === 'none' || cs.visibility === 'hidden') continue;
+          const fs = parseFloat(cs.fontSize || '11');
+          if (fs < 9.8) {
+            errors.push('font_too_small:' + (el.className || el.tagName) + '(' + fs + 'px)');
+          }
+          if (!katexRoot && (cs.overflow === 'hidden' || cs.overflowY === 'hidden')) {
+            errors.push('illegal_overflow_clipping:' + (el.className || el.tagName));
+          }
+        }
+
         document.documentElement.dataset.renderStatus = errors.length === 0 ? 'ok' : errors.join(';');
-        document.documentElement.dataset.renderReady = 'true';
+        if (markReady) {
+          document.documentElement.dataset.renderReady = 'true';
+        }
       }
 
-      finalizeAudit();
+      finalizeAudit(false);
 
       const fontPromise = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
       const imagePromises = Array.from(document.images || []).map(function(img) {
@@ -291,7 +317,7 @@
       });
 
       Promise.all([fontPromise].concat(imagePromises)).then(function() {
-        setTimeout(finalizeAudit, 20);
+        setTimeout(function() { finalizeAudit(true); }, 20);
       });
     })();
   </script>

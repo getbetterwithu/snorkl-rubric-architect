@@ -2,8 +2,8 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="snorkl-spec-sha256" content="9a1aedf77c597720">
-  <meta name="snorkl-final-answer" content="3">
+  <meta name="snorkl-spec-sha256" content="4366cc979892d219">
+  <meta name="snorkl-body-sha256" content="89d4d718896b97b5">
   <title>계수가 분수인 일차부등식의 최대 자연수 해 - 교사 참고용 채점기준표</title>
   <link rel="stylesheet" href="../../scripts/vendor/katex/katex.min.css">
   <script src="../../scripts/vendor/katex/katex.min.js"></script>
@@ -160,7 +160,7 @@
 
   <div class="section-title">1. 최종 정답 및 교과서 표준 모범답안</div>
   <div class="info-box">
-    <div id="final-answer-box" data-final-answer="3" style="margin-bottom: 5px;"><strong>[최종 정답 (정오 판단 기준)]</strong> $3$</div>
+    <div id="final-answer-box" style="margin-bottom: 5px;"><strong>[최종 정답 (정오 판단 기준)]</strong> <span id="final-answer-value">$3$</span></div>
     <div><strong>[기본 모범답안]</strong> 분모 $5, 2, 3$의 최소공배수인 양수 $30$을 양변에 곱하면 $12x - 15 > 10(2x - 4)$이다. 우변의 괄호를 풀면 $12x - 15 > 20x - 40$이고, 일차항을 좌변으로, 상수항을 우변으로 이항하여 정리하면 $-8x > -25$이다. 양변을 음수 $-8$로 나누면 부등호의 방향이 바뀌므로 $x < \frac{25}{8}$ ($= 3.125$)이다. 따라서 이를 만족시키는 자연수 $x$는 $1, 2, 3$이므로 가장 큰 자연수 $x$의 값은 $3$이다.</div>
   </div>
 
@@ -196,7 +196,7 @@
       </tr>
     </tbody>
   </table>
-  <div class="info-box" style="padding: 5px 10px; font-size: 10.4px;"><strong>[0~4점 정수 매핑]</strong> <strong>4점</strong>: ①~④ 전 요소 충족 / <strong>3점</strong>: 단순 산술 실수 1건 외 부등호 처리 및 최대 자연수 추론 일관 완결(오류 이월) / <strong>2점</strong>: ①·② 충족 후 음수 나눗셈 부등호 방향 오류 / <strong>1점</strong>: 공배수 곱하기 초기 변형만 성공 / <strong>0점</strong>: 근거 없는 답 단독 기재 또는 해 도출 없는 단순 숫자 대입</div>
+  <div class="info-box" style="padding: 5px 10px; font-size: 10.4px;"><strong>[0~4점 정수 매핑]</strong> <strong>4점</strong>: ①~④ 전 요소 충족 / <strong>3점</strong>: 오류 이월 포함 3개 요소 충족(예: 초기 산술 실수 후 ②~④ 일관 완결) / <strong>2점</strong>: 2개 요소 충족(예: ①·② 충족 후 음수 나눗셈 부등호 방향 오류) / <strong>1점</strong>: 1개 요소 충족(예: ① 정계수 변형만 성공 후 대입 확인 등) / <strong>0점</strong>: 충족 요소 없음(근거 없는 단답 또는 식 변형 없는 단순 숫자 대입)</div>
 
   <div class="section-title">3. AI 억지감점 방지 및 문항 특화 채점 원칙</div>
   <div class="guardrails-box">
@@ -206,7 +206,7 @@
       <li><strong>정답 단독 기재</strong>: 설명 요구 문항에서 필기·도형·음성 근거가 전무한 단순 정답 기재는 설명 점수 $0$점 처리(단순 암산 중간 줄 생략은 허용).</li>
       <li><strong>오류 이월(발생 지점 1회 감점)</strong>: 최초 오류 지점만 감점하고 그 결과와 논리적으로 일관된 후속 전개는 중복 감점 금지(단, 핵심 개념 훼손·난이도 붕괴 오류는 이월 불인정).</li>
       <li><strong>선행·대안 방법 및 표현 자율성</strong>: 발문의 방법 제한이 없는 한 수학적으로 타당한 선행·별해와 동치 표기·순서 변경을 인정하며, 앞선 논증을 부정하는 모순 서술만 감점.</li>
-      <li><strong>[문항 특화]</strong> 발문 준수 확인: 발문에서 '주어진 일차부등식의 해를 구하고'라고 명시했으므로, 해($x < \frac{25}{8}$)를 구하지 않고 $x=1, 2, 3, 4$만 대입해 답을 찾은 풀이는 ①~③ 미충족(최대 $1$점)으로 처리.</li>
+      <li><strong>[문항 특화]</strong> 발문 준수 확인: 발문에서 '주어진 일차부등식의 해를 구하고'라고 명시했으므로 해 도출 없는 숫자 대입만으로는 ②~④를 인정하지 않음(식 변형 없는 원식 대입은 $0$점, ① 정계수 변형 후 대입은 ①만 인정하여 $1$점).</li>
       <li><strong>[문항 특화]</strong> 분수·대분수·소수 동치 인정: 해를 $x < \frac{25}{8}$, $x < 3\frac{1}{8}$, $x < 3.125$ 중 어느 형태로 표기해도 ③ 완전 인정.</li>
     </ul>
   </div>
@@ -219,6 +219,7 @@
   <script>
     (function() {
       document.documentElement.dataset.renderStatus = 'pending';
+      document.documentElement.dataset.renderReady = 'false';
       const baseErrors = [];
       if (typeof renderMathInElement !== 'function') {
         baseErrors.push('katex_not_loaded');
@@ -237,7 +238,7 @@
         }
       }
 
-      function finalizeAudit() {
+      function finalizeAudit(markReady) {
         const errors = baseErrors.slice();
         const katexErrors = document.querySelectorAll('.katex-error');
         if (katexErrors.length > 0) {
@@ -252,17 +253,17 @@
         }
 
         document.querySelectorAll('img').forEach(function(img) {
-          if (!img.complete || img.naturalWidth === 0) {
+          if (markReady) {
+            if (!img.complete || img.naturalWidth === 0) {
+              errors.push('broken_image:' + (img.getAttribute('src') || 'unknown'));
+            }
+          } else if (img.complete && img.naturalWidth === 0) {
             errors.push('broken_image:' + (img.getAttribute('src') || 'unknown'));
           }
         });
 
         document.querySelectorAll('body, table, .info-box, .alt-solutions-box, .guardrails-box').forEach(function(el) {
           const cs = window.getComputedStyle(el);
-          const fs = parseFloat(cs.fontSize || '11');
-          if (fs < 9.5) {
-            errors.push('font_too_small:' + (el.className || el.tagName) + '(' + fs + 'px)');
-          }
           if (cs.overflow === 'hidden' || cs.overflowY === 'hidden') {
             errors.push('illegal_overflow_clipping:' + (el.className || el.tagName));
           }
@@ -271,11 +272,36 @@
           }
         });
 
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+        const checkedEls = new Set();
+        let tNode;
+        while ((tNode = walker.nextNode())) {
+          if (!tNode.nodeValue || !tNode.nodeValue.replace(/[\s\u200b-\u200d\ufeff]/g, '')) continue;
+          const rawEl = tNode.parentElement;
+          if (!rawEl) continue;
+          if (rawEl.closest('script, style, svg, .katex-mathml, .vlist-s')) continue;
+          const katexRoot = rawEl.closest('.katex');
+          const el = katexRoot || rawEl;
+          if (checkedEls.has(el)) continue;
+          checkedEls.add(el);
+          const cs = window.getComputedStyle(el);
+          if (cs.display === 'none' || cs.visibility === 'hidden') continue;
+          const fs = parseFloat(cs.fontSize || '11');
+          if (fs < 9.8) {
+            errors.push('font_too_small:' + (el.className || el.tagName) + '(' + fs + 'px)');
+          }
+          if (!katexRoot && (cs.overflow === 'hidden' || cs.overflowY === 'hidden')) {
+            errors.push('illegal_overflow_clipping:' + (el.className || el.tagName));
+          }
+        }
+
         document.documentElement.dataset.renderStatus = errors.length === 0 ? 'ok' : errors.join(';');
-        document.documentElement.dataset.renderReady = 'true';
+        if (markReady) {
+          document.documentElement.dataset.renderReady = 'true';
+        }
       }
 
-      finalizeAudit();
+      finalizeAudit(false);
 
       const fontPromise = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
       const imagePromises = Array.from(document.images || []).map(function(img) {
@@ -286,7 +312,7 @@
       });
 
       Promise.all([fontPromise].concat(imagePromises)).then(function() {
-        setTimeout(finalizeAudit, 20);
+        setTimeout(function() { finalizeAudit(true); }, 20);
       });
     })();
   </script>

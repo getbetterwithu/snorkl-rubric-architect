@@ -20,6 +20,7 @@ import tempfile
 import time
 import unittest
 import zlib
+from unittest.mock import patch
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SCRIPTS_DIR = os.path.join(REPO_ROOT, "scripts")
@@ -27,6 +28,7 @@ if SCRIPTS_DIR not in sys.path:
     sys.path.insert(0, SCRIPTS_DIR)
 
 import render_card
+import snorkl_builder
 import snorkl_geometry_engine as geo
 import validate_outputs
 
@@ -178,6 +180,20 @@ class TestRendererZeroFalsePositives(unittest.TestCase):
         self.assertFalse(render_card.render_png(overflow_html, overflow_png))
         self.assertFalse(os.path.exists(overflow_png))
 
+        # 3. 1px unreadable child span in teacher sheet -> must fail render_pdf
+        with open(os.path.join(SCRIPTS_DIR, "template_teacher_sheet.html"), "r", encoding="utf-8") as f:
+            sheet_tpl = f.read()
+        tiny_sheet_html = os.path.join(self.tmpdir, "tiny_sheet.html")
+        tiny_sheet_pdf = os.path.join(self.tmpdir, "tiny_sheet.pdf")
+        tiny_body = '<div class="info-box"><span style="font-size:1px">UNREADABLE MODEL SOLUTION</span></div>'
+        with open(tiny_sheet_html, "w", encoding="utf-8") as f:
+            f.write(
+                sheet_tpl.replace("<!-- TITLE_PLACEHOLDER -->", "Test")
+                .replace("<!-- CONTENT_HTML_PLACEHOLDER -->", tiny_body)
+            )
+        self.assertFalse(render_card.render_pdf(tiny_sheet_html, tiny_sheet_pdf))
+        self.assertFalse(os.path.exists(tiny_sheet_pdf))
+
 
 class TestValidatorAndGoldenExamples(unittest.TestCase):
     def setUp(self):
@@ -199,8 +215,9 @@ class TestValidatorAndGoldenExamples(unittest.TestCase):
     def test_validator_catches_resolution_latex_and_cross_file_drift(self):
         src_dir = os.path.join(REPO_ROOT, "examples", "algebra_linear_inequality")
         for fn in os.listdir(src_dir):
-            if not fn.endswith(".py"):
-                shutil.copy2(os.path.join(src_dir, fn), os.path.join(self.tmpdir, fn))
+            src_fp = os.path.join(src_dir, fn)
+            if os.path.isfile(src_fp) and not fn.endswith(".py"):
+                shutil.copy2(src_fp, os.path.join(self.tmpdir, fn))
 
         slug = "일차부등식_최대자연수해"
         png = os.path.join(self.tmpdir, f"{slug}_문제등록화면.png")
@@ -239,7 +256,7 @@ class TestValidatorAndGoldenExamples(unittest.TestCase):
         self.assertFalse(ok)
         self.assertTrue(any("Forbidden LaTeX" in e for e in errs))
         self.assertTrue(any("0.5점" in e for e in errs))
-        self.assertTrue(any("stem number mismatch" in e for e in errs))
+        self.assertTrue(any("stem mismatch" in e for e in errs))
 
         # Case C: Answer mismatch between MD and Sheet HTML
         answer_drift_md = orig_md.replace("\n3\n", "\n7\n", 1)
@@ -249,15 +266,117 @@ class TestValidatorAndGoldenExamples(unittest.TestCase):
         self.assertFalse(ok)
         self.assertTrue(any("final answer mismatch" in e for e in errs))
 
+    def test_adversarial_rc_audit_bypasses_all_blocked(self):
+        src_dir = os.path.join(REPO_ROOT, "examples", "algebra_linear_inequality")
+        for fn in os.listdir(src_dir):
+            src_fp = os.path.join(src_dir, fn)
+            if os.path.isfile(src_fp) and not fn.endswith(".py"):
+                shutil.copy2(src_fp, os.path.join(self.tmpdir, fn))
+
+        slug = "일차부등식_최대자연수해"
+        png = os.path.join(self.tmpdir, f"{slug}_문제등록화면.png")
+        md = os.path.join(self.tmpdir, f"{slug}_정답_평가기준.md")
+        pdf = os.path.join(self.tmpdir, f"{slug}_교사참고용_채점기준표.pdf")
+        c_html = os.path.join(self.tmpdir, f"{slug}_card.html")
+        s_html = os.path.join(self.tmpdir, f"{slug}_sheet.html")
+        with open(md, "r", encoding="utf-8") as f:
+            orig_md = f.read()
+
+        # 1. ProblemSpec LaTeX vs Plain answer divergence ($999$ vs 3) -> ValueError at build time
+        import importlib.util
+
+        spec_mod_path = os.path.join(src_dir, "build_example.py")
+        loader = importlib.util.spec_from_file_location("ex_alg", spec_mod_path)
+        ex_alg = importlib.util.module_from_spec(loader)  # type: ignore[arg-type]
+        assert loader and loader.loader
+        loader.loader.exec_module(ex_alg)
+        bad_spec = ex_alg.make_spec()
+        bad_spec.final_answer_latex = "$999$"
+        with self.assertRaises(ValueError):
+            snorkl_builder.build_all_outputs(bad_spec, os.path.join(self.tmpdir, "bad_out"))
+
+        # 2. Truncated 24-byte PNG -> rejected
+        trunc_png = os.path.join(self.tmpdir, "truncated.png")
+        with open(png, "rb") as f_in, open(trunc_png, "wb") as f_out:
+            f_out.write(f_in.read(24))
+        ok, errs = validate_outputs.validate_deliverable_set(trunc_png, md, pdf, c_html, s_html, check_dom=False)
+        self.assertFalse(ok)
+
+        # 3. Inequality flip (`>` -> `<`) and number order swap (`2/5` -> `5/2`) -> both rejected
+        stem_part, rest_part = orig_md.split("[정답", 1)
+        for bad_stem in (stem_part.replace(" > ", " < "), stem_part.replace("(2/5)", "(5/2)")):
+            bad_md = os.path.join(self.tmpdir, "bad_stem.md")
+            with open(bad_md, "w", encoding="utf-8") as f:
+                f.write(bad_stem + "[정답" + rest_part)
+            ok, errs = validate_outputs.validate_deliverable_set(png, bad_md, pdf, c_html, s_html, check_dom=False)
+            self.assertFalse(ok, f"Expected stem mutation to fail: {bad_stem}")
+
+        # 4. Unlisted LaTeX commands, fractional score bypasses, and Olympiad brackets -> all rejected
+        for snippet in (
+            r"\alpha + \beta \leq 90^\circ",
+            r"집합 \{1, 2\}",
+            "부분점수 0.5점을 준다(감점 금지).",
+            "부분점수 0.5 점 부여",
+            "부분점수 1.5점 부여",
+            "반점 부여",
+            "넓이를 [□ABCD]라 하자.",
+            "넓이를 [ABC]라 하자.",
+        ):
+            bad_md = os.path.join(self.tmpdir, "bad_tok.md")
+            with open(bad_md, "w", encoding="utf-8") as f:
+                f.write(orig_md + "\n" + snippet + "\n")
+            ok, _ = validate_outputs.validate_deliverable_set(png, bad_md, pdf, c_html, s_html, check_dom=False)
+            self.assertFalse(ok, f"Expected snippet to be blocked: {snippet}")
+
+        # 5. Unrelated US Letter PDF (612 x 792 pt) -> rejected even without PyMuPDF
+        letter_pdf = os.path.join(self.tmpdir, "letter.pdf")
+        fake_pdf_bytes = (
+            b"%PDF-1.4\n1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj\n"
+            b"2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj\n"
+            b"3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] >> endobj\n"
+            + b"%padding\n" * 160
+            + b"%%EOF\n"
+        )
+        with open(letter_pdf, "wb") as f:
+            f.write(fake_pdf_bytes)
+        ok, errs = validate_outputs.validate_deliverable_set(png, md, letter_pdf, c_html, s_html, check_dom=False)
+        self.assertFalse(ok)
+        self.assertTrue(any("not A4 portrait" in e for e in errs))
+
+        # 6. Missing HTML sources -> rejected by default
+        ok, errs = validate_outputs.validate_deliverable_set(png, md, pdf, None, None, check_dom=False)
+        self.assertFalse(ok)
+        self.assertTrue(any("missing" in e.lower() for e in errs))
+
+        # 7. Missing headless browser when check_dom=True -> rejected (never silently skipped)
+        with patch.object(validate_outputs, "find_browser", return_value=None):
+            ok, errs = validate_outputs.validate_deliverable_set(png, md, pdf, c_html, s_html, check_dom=True)
+            self.assertFalse(ok)
+            self.assertTrue(any("browser" in e.lower() for e in errs))
+
+        # 8. Post-build hand modification of `_sheet.html` body -> rejected by `snorkl-body-sha256`
+        tampered_sheet = os.path.join(self.tmpdir, "tampered_sheet.html")
+        with open(s_html, "r", encoding="utf-8") as f:
+            orig_sheet = f.read()
+        with open(tampered_sheet, "w", encoding="utf-8") as f:
+            f.write(orig_sheet.replace("기본 모범답안", "임의 변조 모범답안"))
+        now = time.time()
+        os.utime(tampered_sheet, (now - 10, now - 10))
+        os.utime(pdf, (now - 1, now - 1))
+        ok, errs = validate_outputs.validate_deliverable_set(png, md, pdf, c_html, tampered_sheet, check_dom=False)
+        self.assertFalse(ok)
+        self.assertTrue(any("snorkl-body-sha256" in e for e in errs))
+
 
 class TestCurriculumStandardsIntegrity(unittest.TestCase):
     def test_curriculum_fact_corrections_present(self):
         ref_path = os.path.join(REPO_ROOT, "references", "korean_middle_math_standards.md")
         with open(ref_path, "r", encoding="utf-8") as f:
             text = f.read()
-        self.assertIn("원의 접선과 현이 이루는 각의 성질'은 중3 교육과정에 포함됨", text)
+        self.assertIn("원의 접선과 현이 이루는 각의 성질", text)
         self.assertIn("0°에서 90°까지의 각도에 대한 삼각비의 값", text)
         self.assertIn("최대공약수·최소공배수의 실생활 활용 문제는 다루지 않음", text)
+        self.assertIn("[9수04-05]", text)
         self.assertIn("각 계수가 $0$이 아닐 때", text)
 
 

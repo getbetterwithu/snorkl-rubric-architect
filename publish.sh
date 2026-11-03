@@ -24,19 +24,29 @@ echo "  Snorkl Rubric Architect — 듀얼 레포 검증 & 배포 (v15.0)"
 echo "  계정: getbetterwithu"
 echo "======================================================"
 
-# 1. Safety guard against secrets or temporary output folders
-FORBIDDEN_MATCHES="$(find . -maxdepth 3 \( -name ".env*" -o -name "*.pem" -o -name "*.key" -o -name "*secret*" \) -not -path "./.git/*" || true)"
+# 1. Verify current branch is `main` so tested branch matches push target
+CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+if [ "$CURRENT_BRANCH" != "main" ]; then
+    echo "[오류] 현재 브랜치가 'main'이 아닙니다(현재: $CURRENT_BRANCH). 'main' 브랜치에서 배포하세요." >&2
+    exit 1
+fi
+
+# 2. Safety guard against secrets or temporary output folders (full depth)
+FORBIDDEN_MATCHES="$(find . \( -name ".env*" -o -name "*.pem" -o -name "*.key" -o -name "*secret*" -o -name "snorkl_output" \) -not -path "./.git/*" || true)"
 if [ -n "$FORBIDDEN_MATCHES" ]; then
-    echo "[보안 차단] 민감 파일 패턴이 감지되어 배포를 중단합니다:" >&2
+    echo "[보안 차단] 민감 파일 또는 임시 출력 폴더가 감지되어 배포를 중단합니다:" >&2
     echo "$FORBIDDEN_MATCHES" >&2
     exit 1
 fi
 
-# 2. Run automated regression tests before publishing
+# 3. Rebuild golden examples & run automated regression tests before publishing
 PYTHON_BIN="python3"
 if ! command -v python3 >/dev/null 2>&1; then
     PYTHON_BIN="python"
 fi
+echo "▶ 표준 예제 최신화 및 검증 중..."
+"$PYTHON_BIN" examples/geometry_trapezoid_motion/build_example.py
+"$PYTHON_BIN" examples/algebra_linear_inequality/build_example.py
 echo "▶ 자동 회귀 테스트(tests/test_core.py) 실행 중..."
 "$PYTHON_BIN" -m unittest discover -s tests -v
 
