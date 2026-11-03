@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """
-render_card.py - High-Speed Cross-Platform Problem Card & PDF Renderer (v14.0)
+render_card.py - High-Speed Cross-Platform Problem Card & PDF Renderer (v14.2.3)
 Capabilities:
   1. PNG Problem Card Rendering (2000x1000):
      - macOS: High-speed native WebKit binary (render_webkit)
-     - Windows: Microsoft Edge (msedge.exe) headless
-     - Auto-opens native viewer (open / os.startfile)
+     - Windows / Linux: Headless browser with isolated profile, UTF-8 stdout/err, RFC-URI, and virtual-time-budget
   2. Teacher Reference A4 PDF Generation:
-     - Cross-platform headless browser --print-to-pdf
+     - Headless browser --print-to-pdf with zero margin, no header/footer, isolated profile
 """
 
 import sys
@@ -15,6 +14,8 @@ import os
 import platform
 import subprocess
 import shutil
+import tempfile
+import pathlib
 
 def find_browser():
     system = platform.system()
@@ -42,7 +43,7 @@ def find_browser():
             if os.path.isfile(path):
                 return path
         return shutil.which("google-chrome") or shutil.which("chromium")
-    else: # Linux
+    else:  # Linux
         for name in ["google-chrome", "google-chrome-stable", "chromium-browser", "chromium", "microsoft-edge"]:
             p = shutil.which(name)
             if p:
@@ -94,22 +95,41 @@ def render_png(html_path, png_path, width=1000, height=500):
     # 2. Browser Headless (Windows Edge / Chrome / Linux)
     browser = find_browser()
     if browser:
-        file_url = "file:///" + html_abs.replace("\\", "/") if system == "Windows" else "file://" + html_abs
-        cmd = [
-            browser,
-            "--headless=new",
-            "--disable-gpu",
-            "--hide-scrollbars",
-            "--force-device-scale-factor=2",
-            f"--window-size={width},{height}",
-            "--allow-file-access-from-files",
-            f"--screenshot={png_abs}",
-            file_url
-        ]
-        res = subprocess.run(cmd, capture_output=True, text=True)
-        if os.path.isfile(png_abs):
-            print(f"[Renderer] Headless browser rendered: {png_abs}")
-            return True
+        # Convert to fully encoded RFC file:/// URI (handles Korean, spaces, @, parentheses)
+        file_uri = pathlib.Path(html_abs).as_uri()
+        temp_dir = tempfile.mkdtemp(prefix="snorkl_edge_")
+        try:
+            cmd = [
+                browser,
+                "--headless=new",
+                "--disable-gpu",
+                "--no-first-run",
+                f"--user-data-dir={temp_dir}",
+                "--hide-scrollbars",
+                "--force-device-scale-factor=2",
+                f"--window-size={width},{height}",
+                "--allow-file-access-from-files",
+                "--virtual-time-budget=3000",
+                "--run-all-compositor-stages-before-draw",
+                f"--screenshot={png_abs}",
+                file_uri
+            ]
+            res = subprocess.run(
+                cmd,
+                capture_output=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=45
+            )
+            if os.path.isfile(png_abs) and os.path.getsize(png_abs) > 0:
+                print(f"[Renderer] Headless browser rendered: {png_abs}")
+                return True
+            else:
+                print(f"[Renderer Error] Screenshot command exited with {res.returncode}: {res.stderr}", file=sys.stderr)
+        except Exception as e:
+            print(f"[Renderer Error] Execution exception: {e}", file=sys.stderr)
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
 
     print(f"[Renderer Error] Could not render PNG from {html_path}", file=sys.stderr)
     return False
@@ -118,29 +138,45 @@ def render_pdf(html_path, pdf_path):
     html_abs = os.path.abspath(html_path)
     pdf_abs = os.path.abspath(pdf_path)
     os.makedirs(os.path.dirname(pdf_abs), exist_ok=True)
-    system = platform.system()
 
     browser = find_browser()
     if not browser:
         print("[Renderer Warning] Headless browser not found for PDF export.", file=sys.stderr)
         return False
 
-    file_url = "file:///" + html_abs.replace("\\", "/") if system == "Windows" else "file://" + html_abs
-    cmd = [
-        browser,
-        "--headless=new",
-        "--disable-gpu",
-        "--no-pdf-header-footer",
-        f"--print-to-pdf={pdf_abs}",
-        file_url
-    ]
-    res = subprocess.run(cmd, capture_output=True, text=True)
-    if os.path.isfile(pdf_abs):
-        print(f"[Renderer] Teacher Reference PDF generated: {pdf_abs}")
-        return True
-    else:
-        print(f"[Renderer Error] PDF generation failed: {res.stderr}", file=sys.stderr)
+    file_uri = pathlib.Path(html_abs).as_uri()
+    temp_dir = tempfile.mkdtemp(prefix="snorkl_edge_pdf_")
+    try:
+        cmd = [
+            browser,
+            "--headless=new",
+            "--disable-gpu",
+            "--no-first-run",
+            f"--user-data-dir={temp_dir}",
+            "--no-pdf-header-footer",
+            "--virtual-time-budget=3000",
+            "--run-all-compositor-stages-before-draw",
+            f"--print-to-pdf={pdf_abs}",
+            file_uri
+        ]
+        res = subprocess.run(
+            cmd,
+            capture_output=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=45
+        )
+        if os.path.isfile(pdf_abs) and os.path.getsize(pdf_abs) > 0:
+            print(f"[Renderer] Teacher Reference PDF generated: {pdf_abs}")
+            return True
+        else:
+            print(f"[Renderer Error] PDF generation failed ({res.returncode}): {res.stderr}", file=sys.stderr)
+            return False
+    except Exception as e:
+        print(f"[Renderer Error] PDF execution exception: {e}", file=sys.stderr)
         return False
+    finally:
+        shutil.rmtree(temp_dir, ignore_errors=True)
 
 def open_file(file_path):
     f_abs = os.path.abspath(file_path)

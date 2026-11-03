@@ -1,9 +1,9 @@
-# Snorkl Rubric Architect 📐✨ (v14.2.2)
+# Snorkl Rubric Architect 📐✨ (v14.2.3)
 
 > **Snorkl(스노클) 수학 서논술형 문항 캔버스 및 AI 4단계 정밀 루브릭 설계 시스템**  
 > Windows 및 macOS를 모두 지원하며, Claude Code, Google Antigravity, OpenAI Codex, Aside 등 모든 주요 AI 에이전트에서 동작하는 크로스 플랫폼 수학 문항 저작 스킬입니다.
 
-[![Skill Standard](https://img.shields.io/badge/Agent_Skill-v14.2.2-blue.svg)](https://github.com/getbetterwithu/snorkl-rubric-architect)
+[![Skill Standard](https://img.shields.io/badge/Agent_Skill-v14.2.3-blue.svg)](https://github.com/getbetterwithu/snorkl-rubric-architect)
 [![Platform](https://img.shields.io/badge/Platform-Windows_%7C_macOS_%7C_Claude_%7C_Gemini_%7C_Codex-green.svg)](https://github.com/getbetterwithu/snorkl-rubric-architect)
 [![License](https://img.shields.io/badge/License-MIT-orange.svg)](LICENSE)
 
@@ -36,7 +36,7 @@ snorkl-update
 
 ---
 
-## 💡 v14.2.2 핵심 기능 및 강화점
+## 💡 v14.2.3 핵심 기능 및 강화점
 
 ### 1. 2022 개정 대한민국 중학 수학 전수 표준화 (`references/`)
 - 중1부터 중3까지 총 21개 전체 대단원의 **교과서 대표 풀이(1순위)**를 의무화.
@@ -82,7 +82,7 @@ flowchart TD
 
 ```
 snorkl-rubric-architect/
-├── SKILL.md                          # 에이전트 공용 프롬프트 및 지침 (v14.2.2)
+├── SKILL.md                          # 에이전트 공용 프롬프트 및 지침 (v14.2.3)
 ├── install.sh                        # macOS / Linux 원클릭 설치 스크립트
 ├── install.ps1                       # Windows PowerShell 원클릭 설치 스크립트 (UTF-8 with BOM)
 ├── publish.sh                        # 듀얼 레포 동기화 배포 스크립트
