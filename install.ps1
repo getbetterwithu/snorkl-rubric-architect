@@ -1,5 +1,5 @@
 ﻿# ==============================================================================
-# Snorkl Rubric Architect — Windows Multi-Agent Installer & Updater (v14.1)
+# Snorkl Rubric Architect — Windows Multi-Agent Installer & Updater (v15.0)
 # Supports: Antigravity / Gemini, Claude Code, OpenAI Codex, Aside
 # Repositories:
 #   - Public:  https://github.com/getbetterwithu/snorkl-rubric-architect
@@ -23,7 +23,7 @@ if ($Dev) {
 $InstallDir = "$env:USERPROFILE\.snorkl-rubric-architect"
 
 Write-Host "======================================================" -ForegroundColor Cyan
-Write-Host "   Snorkl Rubric Architect Windows Installer (v14.1)  " -ForegroundColor Cyan
+Write-Host "   Snorkl Rubric Architect Windows Installer (v15.0)  " -ForegroundColor Cyan
 Write-Host "   (Claude Code · Gemini/Antigravity · Codex · Aside) " -ForegroundColor Cyan
 Write-Host "======================================================" -ForegroundColor Cyan
 if ($Dev) {
@@ -36,10 +36,21 @@ if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
     exit 1
 }
 
-# 2. Clone or Update Repository
+# 2. Clone or Update Repository (with explicit $LASTEXITCODE verification)
 if (Test-Path "$InstallDir\.git") {
+    if ($Dev) {
+        git -C "$InstallDir" remote set-url origin "$RepoUrl"
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "[오류] 개발용 원격 저장소 URL 변경에 실패했습니다." -ForegroundColor Red
+            exit 1
+        }
+    }
     Write-Host "▶ 기존 설치본 발견: 최신 버전으로 업데이트합니다 (git pull --ff-only)..." -ForegroundColor Yellow
     git -C "$InstallDir" pull --ff-only origin main
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "[오류] git pull 업데이트에 실패했습니다 (종료 코드: $LASTEXITCODE). 로컬 변경 사항이나 인증을 확인하세요." -ForegroundColor Red
+        exit 1
+    }
 } else {
     Write-Host "▶ 저장소에서 최신 스킬을 다운로드합니다 ($RepoUrl)..." -ForegroundColor Yellow
     if (Test-Path "$InstallDir") {
@@ -51,6 +62,10 @@ if (Test-Path "$InstallDir\.git") {
         }
     }
     git clone --depth=1 "$RepoUrl" "$InstallDir"
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "[오류] git clone 다운로드에 실패했습니다 (종료 코드: $LASTEXITCODE)." -ForegroundColor Red
+        exit 1
+    }
 }
 
 # 3. Check Python and Edge/Chrome
@@ -63,12 +78,19 @@ if (Get-Command python -ErrorAction SilentlyContinue) {
 
 $ProgramFilesX86 = ${env:ProgramFiles(x86)}
 $ProgramFiles64 = $env:ProgramFiles
-$EdgePath1 = "$ProgramFilesX86\Microsoft\Edge\Application\msedge.exe"
-$EdgePath2 = "$ProgramFiles64\Microsoft\Edge\Application\msedge.exe"
-if ((Test-Path $EdgePath1) -or (Test-Path $EdgePath2)) {
-    Write-Host "  ✓ Microsoft Edge: 고해상도 헤드리스 렌더러 및 PDF 인쇄 지원 확인" -ForegroundColor Green
+$BrowserCandidates = @(
+    "$ProgramFilesX86\Microsoft\Edge\Application\msedge.exe",
+    "$ProgramFiles64\Microsoft\Edge\Application\msedge.exe",
+    "$env:LOCALAPPDATA\Microsoft\Edge\Application\msedge.exe",
+    "$ProgramFiles64\Google\Chrome\Application\chrome.exe",
+    "$ProgramFilesX86\Google\Chrome\Application\chrome.exe",
+    "$env:LOCALAPPDATA\Google\Chrome\Application\chrome.exe"
+)
+$FoundBrowser = $BrowserCandidates | Where-Object { $_ -and (Test-Path $_) } | Select-Object -First 1
+if ($FoundBrowser) {
+    Write-Host "  ✓ Headless Browser 확인: $FoundBrowser" -ForegroundColor Green
 } else {
-    Write-Host "  ⚠ Microsoft Edge를 찾을 수 없습니다. (Google Chrome 확인 권장)" -ForegroundColor Yellow
+    Write-Host "  ⚠ Microsoft Edge 또는 Google Chrome을 찾을 수 없습니다." -ForegroundColor Yellow
 }
 
 # 4. Link to Agent Skill Directories
@@ -104,7 +126,6 @@ function Create-AgentLink($AgentKey, $AgentInfo) {
     $TargetPath = $AgentInfo.Target
     $AgentName = $AgentInfo.Name
 
-    # 감지 검사: 상위 에이전트 폴더 유무 확인 (명시적 지정이 없으면 미감지 시 건너뜀)
     if ($Agents.Count -eq 0 -and -not (Test-Path $HomeDir)) {
         Write-Host "  - $($AgentName): 미설치 (건너뜀)" -ForegroundColor DarkGray
         return 0
@@ -116,15 +137,12 @@ function Create-AgentLink($AgentKey, $AgentInfo) {
     $ParentDir = Split-Path $TargetPath -Parent
     if (-not (Test-Path $ParentDir)) { New-Item -ItemType Directory -Path $ParentDir -Force | Out-Null }
 
-    # 대상 디렉토리 안전성 검사
     if (Test-Path $TargetPath) {
-        $Item = Get-Item $TargetPath
+        $Item = Get-Item $TargetPath -Force
         $IsJunction = ($Item.Attributes -band [IO.FileAttributes]::ReparsePoint) -or ($Item.LinkType -eq "Junction")
         if ($IsJunction) {
-            # 기존 Junction 교체
             [IO.Directory]::Delete($TargetPath)
         } else {
-            # 실제 폴더인 경우
             if ($Force) {
                 Write-Host "  ⚠ $($AgentName): 기존 실제 폴더를 -Force에 의해 교체합니다." -ForegroundColor Yellow
                 Remove-Item -Recurse -Force $TargetPath
@@ -144,13 +162,17 @@ foreach ($Key in $AgentMap.Keys) {
     $LinkedCount += Create-AgentLink $Key $AgentMap[$Key]
 }
 
-# 5. Create snorkl-update command
+# 5. Create snorkl-update command (with exit code verification)
 $BinDir = "$env:USERPROFILE\bin"
 if (-not (Test-Path $BinDir)) { New-Item -ItemType Directory -Path $BinDir -Force | Out-Null }
 $UpdateScript = @"
 @echo off
 echo [Snorkl] Checking for skill updates...
 git -C "%USERPROFILE%\.snorkl-rubric-architect" pull --ff-only origin main
+if errorlevel 1 (
+    echo [Snorkl Error] Update failed. Please check git status or network connection.
+    exit /b 1
+)
 echo [Snorkl] Skill update complete.
 "@
 Set-Content -Path "$BinDir\snorkl-update.cmd" -Value $UpdateScript -Encoding Ascii
@@ -169,6 +191,5 @@ Write-Host "`n======================================================" -Foregroun
 Write-Host "  🎉 Windows AI 에이전트에 스킬 설치가 완료되었습니다!  " -ForegroundColor Green
 Write-Host "======================================================" -ForegroundColor Green
 Write-Host "총 $LinkedCount 개의 감지된 에이전트 경로에 Junction으로 연동되었습니다."
-Write-Host "이제 Claude Code, Gemini, Codex 어디서든 스노클 문항 제작을 요청하시면 됩니다."
 Write-Host "`n- 업데이트 명령어: $BinDir\snorkl-update.cmd (또는 git -C `"$InstallDir`" pull --ff-only)"
 Write-Host "- 설치 원본 디렉토리: $InstallDir"

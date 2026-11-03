@@ -1,6 +1,9 @@
 __pycache__/
 *.pyc
+.pytest_cache/
 .DS_Store
-*.png
 /tmp/
+snorkl_output/
 scripts/render_webkit
+*.png
+!examples/**/*.png

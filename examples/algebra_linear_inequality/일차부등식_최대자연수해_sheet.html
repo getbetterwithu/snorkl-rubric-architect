@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="snorkl-spec-sha256" content="9a1aedf77c597720">
+  <meta name="snorkl-final-answer" content="3">
+  <title>계수가 분수인 일차부등식의 최대 자연수 해 - 교사 참고용 채점기준표</title>
+  <link rel="stylesheet" href="../../scripts/vendor/katex/katex.min.css">
+  <script src="../../scripts/vendor/katex/katex.min.js"></script>
+  <script src="../../scripts/vendor/katex/contrib/auto-render.min.js"></script>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 8.5mm 11mm 8.5mm 11mm;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Pretendard", "Noto Sans KR", sans-serif;
+      color: #0F172A;
+      background: #FFFFFF;
+      margin: 0;
+      padding: 0;
+      font-size: 11px;
+      line-height: 1.48;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+    .header {
+      border-bottom: 2px solid #0F172A;
+      padding-bottom: 5px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 17.5px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: #0F172A;
+    }
+    .header .tag {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #334155;
+      background: #F1F5F9;
+      border: 1px solid #E2E8F0;
+      padding: 2px 7px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1E293B;
+      border-left: 3px solid #0284C7;
+      padding-left: 6px;
+      margin: 8px 0 5px 0;
+      letter-spacing: -0.2px;
+      page-break-after: avoid;
+    }
+    .card-preview-container {
+      text-align: center;
+      margin-bottom: 6px;
+      page-break-inside: avoid;
+    }
+    .card-preview {
+      width: auto;
+      max-width: 100%;
+      max-height: 145px;
+      object-fit: contain;
+      border: 1px solid #CBD5E1;
+      border-radius: 6px;
+      background: #FFFFFF;
+      display: block;
+      margin: 0 auto;
+    }
+    .info-box {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 6px;
+      padding: 7px 11px;
+      margin-bottom: 7px;
+      font-size: 11px;
+      page-break-inside: avoid;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 5px 0 8px 0;
+      font-size: 10.8px;
+      page-break-inside: avoid;
+    }
+    th, td {
+      border: 1px solid #CBD5E1;
+      padding: 4.5px 7px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #F1F5F9;
+      font-weight: 700;
+      color: #1E293B;
+    }
+    .th-stage { width: 19%; }
+    .th-full { width: 45%; }
+    .th-partial { width: 36%; }
+    .alt-solutions-box {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 6px;
+      padding: 7px 11px;
+      margin-bottom: 7px;
+      font-size: 10.8px;
+      page-break-inside: avoid;
+    }
+    .guardrails-box {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 6px;
+      padding: 6px 11px;
+      font-size: 10.3px;
+      color: #334155;
+      page-break-inside: avoid;
+    }
+    .guardrails-list {
+      margin: 3px 0;
+      padding-left: 17px;
+      line-height: 1.42;
+    }
+    .guardrails-list li {
+      margin-bottom: 2px;
+    }
+    .footer {
+      margin-top: 8px;
+      border-top: 1px solid #E2E8F0;
+      padding-top: 4px;
+      font-size: 10px;
+      color: #64748B;
+      display: flex;
+      justify-content: space-between;
+      page-break-before: avoid;
+    }
+    .katex { font-size: 1.03em; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <span style="font-size: 10px; color: #0284C7; font-weight: 700; letter-spacing: 0.5px;">SNORKL 서논술형 평가</span>
+      <h1>계수가 분수인 일차부등식의 최대 자연수 해</h1>
+    </div>
+    <div class="tag">교사 참고용 마스터 기준표 (정오 + 0~4점 척도)</div>
+  </div>
+
+  <div class="card-preview-container">
+    <img class="card-preview" src="./%EC%9D%BC%EC%B0%A8%EB%B6%80%EB%93%B1%EC%8B%9D_%EC%B5%9C%EB%8C%80%EC%9E%90%EC%97%B0%EC%88%98%ED%95%B4_%EB%AC%B8%EC%A0%9C%EB%93%B1%EB%A1%9D%ED%99%94%EB%A9%B4.png" alt="문제 등록 카드 미리보기">
+  </div>
+
+  <div class="section-title">1. 최종 정답 및 교과서 표준 모범답안</div>
+  <div class="info-box">
+    <div id="final-answer-box" data-final-answer="3" style="margin-bottom: 5px;"><strong>[최종 정답 (정오 판단 기준)]</strong> $3$</div>
+    <div><strong>[기본 모범답안]</strong> 분모 $5, 2, 3$의 최소공배수인 양수 $30$을 양변에 곱하면 $12x - 15 > 10(2x - 4)$이다. 우변의 괄호를 풀면 $12x - 15 > 20x - 40$이고, 일차항을 좌변으로, 상수항을 우변으로 이항하여 정리하면 $-8x > -25$이다. 양변을 음수 $-8$로 나누면 부등호의 방향이 바뀌므로 $x < \frac{25}{8}$ ($= 3.125$)이다. 따라서 이를 만족시키는 자연수 $x$는 $1, 2, 3$이므로 가장 큰 자연수 $x$의 값은 $3$이다.</div>
+  </div>
+
+  <div class="section-title">2. 설명 점수 채점 기준표 (스노클 0~4점 정수 척도)</div>
+  <table>
+    <thead>
+      <tr>
+        <th class="th-stage">성취 요소</th>
+        <th class="th-full">충족 기준 (필기·도형·음성 통합)</th>
+        <th class="th-partial">감점·오류 이월 및 경계 처리</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>① 정계수 변환·전개 (1점)</strong></td>
+        <td>양변에 $30$(또는 공배수)을 곱하거나 통분하여 $12x - 15 > 20x - 40$과 동치인 식으로 올바르게 정리함</td>
+        <td>상수항 $-\frac{1}{2}$에 $30$을 곱하지 않는 분배 누락 또는 괄호 부호 실수 시 본 요소 감점(후속 일관 풀이는 이월)</td>
+      </tr>
+      <tr>
+        <td><strong>② 이항 및 동류항 정리 (1점)</strong></td>
+        <td>미지수 항과 상수항을 이항하여 $-8x > -25$ 또는 $25 > 8x$ ($8x < 25$)를 도출함</td>
+        <td>미지수 항을 우변으로 넘겨 양수 계수($25 > 8x$)로 정리한 풀이도 100% 동등 인정</td>
+      </tr>
+      <tr>
+        <td><strong>③ 부등식 해 도출 (1점)</strong></td>
+        <td>부등호 방향을 올바르게 처리하여 해 $x < \frac{25}{8}$ (또는 $x < 3\frac{1}{8}$, $x < 3.125$)를 구함</td>
+        <td>$-8$로 나눌 때 부등호 방향 미전환($x > \frac{25}{8}$) 시 본 요소 미충족 및 '최대 자연수' 구조 붕괴로 ④ 이월 불가</td>
+      </tr>
+      <tr>
+        <td><strong>④ 최대 자연수 결정 (1점)</strong></td>
+        <td>구한 해의 범위($x < \frac{25}{8}$)를 근거로 가장 큰 자연수 $3$을 명확히 도출함</td>
+        <td>앞선 산술 실수로 예: $x < \frac{35}{8}$을 얻은 뒤 그 범위의 최대 자연수 $4$를 일관되게 답한 경우 ④ 이월 인정</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="info-box" style="padding: 5px 10px; font-size: 10.4px;"><strong>[0~4점 정수 매핑]</strong> <strong>4점</strong>: ①~④ 전 요소 충족 / <strong>3점</strong>: 단순 산술 실수 1건 외 부등호 처리 및 최대 자연수 추론 일관 완결(오류 이월) / <strong>2점</strong>: ①·② 충족 후 음수 나눗셈 부등호 방향 오류 / <strong>1점</strong>: 공배수 곱하기 초기 변형만 성공 / <strong>0점</strong>: 근거 없는 답 단독 기재 또는 해 도출 없는 단순 숫자 대입</div>
+
+  <div class="section-title">3. AI 억지감점 방지 및 문항 특화 채점 원칙</div>
+  <div class="guardrails-box">
+    <ul class="guardrails-list">
+      <li><strong>스노클 이원 채점(정오 + 0~4점 정수)</strong>: 최종 답 정오(Correct/Incorrect)와 풀이 설명 점수($0, 1, 2, 3, 4$ 정수)를 분리하며, AI 채점에 $0.5$점 단위를 강제하지 않음.</li>
+      <li><strong>필기·도형·음성(Voice) 통합 근거 인정</strong>: 결론 근거를 직전 식에 한정하지 않고 답안 전체의 필기·도형 표시·음성 설명에서 인정하며, 발화 중 자기 정정은 최종 의도 기준으로 채점.</li>
+      <li><strong>정답 단독 기재</strong>: 설명 요구 문항에서 필기·도형·음성 근거가 전무한 단순 정답 기재는 설명 점수 $0$점 처리(단순 암산 중간 줄 생략은 허용).</li>
+      <li><strong>오류 이월(발생 지점 1회 감점)</strong>: 최초 오류 지점만 감점하고 그 결과와 논리적으로 일관된 후속 전개는 중복 감점 금지(단, 핵심 개념 훼손·난이도 붕괴 오류는 이월 불인정).</li>
+      <li><strong>선행·대안 방법 및 표현 자율성</strong>: 발문의 방법 제한이 없는 한 수학적으로 타당한 선행·별해와 동치 표기·순서 변경을 인정하며, 앞선 논증을 부정하는 모순 서술만 감점.</li>
+      <li><strong>[문항 특화]</strong> 발문 준수 확인: 발문에서 '주어진 일차부등식의 해를 구하고'라고 명시했으므로, 해($x < \frac{25}{8}$)를 구하지 않고 $x=1, 2, 3, 4$만 대입해 답을 찾은 풀이는 ①~③ 미충족(최대 $1$점)으로 처리.</li>
+      <li><strong>[문항 특화]</strong> 분수·대분수·소수 동치 인정: 해를 $x < \frac{25}{8}$, $x < 3\frac{1}{8}$, $x < 3.125$ 중 어느 형태로 표기해도 ③ 완전 인정.</li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    <span>Snorkl Rubric Architect v15.0</span>
+    <span>https://teacher.snorkl.app/home</span>
+  </div>
+
+  <script>
+    (function() {
+      document.documentElement.dataset.renderStatus = 'pending';
+      const baseErrors = [];
+      if (typeof renderMathInElement !== 'function') {
+        baseErrors.push('katex_not_loaded');
+      } else {
+        try {
+          renderMathInElement(document.body, {
+            delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false}
+            ],
+            throwOnError: false,
+            strict: false
+          });
+        } catch (err) {
+          baseErrors.push('katex_exception:' + String(err));
+        }
+      }
+
+      function finalizeAudit() {
+        const errors = baseErrors.slice();
+        const katexErrors = document.querySelectorAll('.katex-error');
+        if (katexErrors.length > 0) {
+          const detail = Array.from(katexErrors).map(function(e) { return e.textContent.trim(); }).join('|');
+          errors.push('katex_parse_error:' + detail);
+        }
+
+        const clone = document.body.cloneNode(true);
+        clone.querySelectorAll('script, style, svg').forEach(function(el) { el.remove(); });
+        if (clone.textContent.indexOf('$') !== -1) {
+          errors.push('unrendered_dollar_in_dom');
+        }
+
+        document.querySelectorAll('img').forEach(function(img) {
+          if (!img.complete || img.naturalWidth === 0) {
+            errors.push('broken_image:' + (img.getAttribute('src') || 'unknown'));
+          }
+        });
+
+        document.querySelectorAll('body, table, .info-box, .alt-solutions-box, .guardrails-box').forEach(function(el) {
+          const cs = window.getComputedStyle(el);
+          const fs = parseFloat(cs.fontSize || '11');
+          if (fs < 9.5) {
+            errors.push('font_too_small:' + (el.className || el.tagName) + '(' + fs + 'px)');
+          }
+          if (cs.overflow === 'hidden' || cs.overflowY === 'hidden') {
+            errors.push('illegal_overflow_clipping:' + (el.className || el.tagName));
+          }
+          if (el.scrollWidth > el.clientWidth + 6) {
+            errors.push('horizontal_overflow:' + (el.className || el.tagName));
+          }
+        });
+
+        document.documentElement.dataset.renderStatus = errors.length === 0 ? 'ok' : errors.join(';');
+        document.documentElement.dataset.renderReady = 'true';
+      }
+
+      finalizeAudit();
+
+      const fontPromise = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+      const imagePromises = Array.from(document.images || []).map(function(img) {
+        return img.complete ? Promise.resolve() : new Promise(function(resolve) {
+          img.addEventListener('load', resolve, { once: true });
+          img.addEventListener('error', resolve, { once: true });
+        });
+      });
+
+      Promise.all([fontPromise].concat(imagePromises)).then(function() {
+        setTimeout(finalizeAudit, 20);
+      });
+    })();
+  </script>
+</body>
+</html>

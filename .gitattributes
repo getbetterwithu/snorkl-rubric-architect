@@ -14,3 +14,11 @@
 *.html text eol=lf
 *.md text eol=lf
 *.swift text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+
+# Binary assets - never alter bytes
+*.woff2 binary
+*.png binary
+*.pdf binary

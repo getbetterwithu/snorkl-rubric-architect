@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="snorkl-spec-sha256" content="714b98a741e4d939">
+  <meta name="snorkl-final-answer" content="(1) y = 8x + 60, (2) 4초 후">
+  <title>직사각형 위를 움직이는 점과 사다리꼴의 넓이 - 교사 참고용 채점기준표</title>
+  <link rel="stylesheet" href="../../scripts/vendor/katex/katex.min.css">
+  <script src="../../scripts/vendor/katex/katex.min.js"></script>
+  <script src="../../scripts/vendor/katex/contrib/auto-render.min.js"></script>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 8.5mm 11mm 8.5mm 11mm;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Pretendard", "Noto Sans KR", sans-serif;
+      color: #0F172A;
+      background: #FFFFFF;
+      margin: 0;
+      padding: 0;
+      font-size: 11px;
+      line-height: 1.48;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+    .header {
+      border-bottom: 2px solid #0F172A;
+      padding-bottom: 5px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 17.5px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: #0F172A;
+    }
+    .header .tag {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #334155;
+      background: #F1F5F9;
+      border: 1px solid #E2E8F0;
+      padding: 2px 7px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1E293B;
+      border-left: 3px solid #0284C7;
+      padding-left: 6px;
+      margin: 8px 0 5px 0;
+      letter-spacing: -0.2px;
+      page-break-after: avoid;
+    }
+    .card-preview-container {
+      text-align: center;
+      margin-bottom: 6px;
+      page-break-inside: avoid;
+    }
+    .card-preview {
+      width: auto;
+      max-width: 100%;
+      max-height: 145px;
+      object-fit: contain;
+      border: 1px solid #CBD5E1;
+      border-radius: 6px;
+      background: #FFFFFF;
+      display: block;
+      margin: 0 auto;
+    }
+    .info-box {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 6px;
+      padding: 7px 11px;
+      margin-bottom: 7px;
+      font-size: 11px;
+      page-break-inside: avoid;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 5px 0 8px 0;
+      font-size: 10.8px;
+      page-break-inside: avoid;
+    }
+    th, td {
+      border: 1px solid #CBD5E1;
+      padding: 4.5px 7px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #F1F5F9;
+      font-weight: 700;
+      color: #1E293B;
+    }
+    .th-stage { width: 19%; }
+    .th-full { width: 45%; }
+    .th-partial { width: 36%; }
+    .alt-solutions-box {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 6px;
+      padding: 7px 11px;
+      margin-bottom: 7px;
+      font-size: 10.8px;
+      page-break-inside: avoid;
+    }
+    .guardrails-box {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 6px;
+      padding: 6px 11px;
+      font-size: 10.3px;
+      color: #334155;
+      page-break-inside: avoid;
+    }
+    .guardrails-list {
+      margin: 3px 0;
+      padding-left: 17px;
+      line-height: 1.42;
+    }
+    .guardrails-list li {
+      margin-bottom: 2px;
+    }
+    .footer {
+      margin-top: 8px;
+      border-top: 1px solid #E2E8F0;
+      padding-top: 4px;
+      font-size: 10px;
+      color: #64748B;
+      display: flex;
+      justify-content: space-between;
+      page-break-before: avoid;
+    }
+    .katex { font-size: 1.03em; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <span style="font-size: 10px; color: #0284C7; font-weight: 700; letter-spacing: 0.5px;">SNORKL 서논술형 평가</span>
+      <h1>직사각형 위를 움직이는 점과 사다리꼴의 넓이</h1>
+    </div>
+    <div class="tag">교사 참고용 마스터 기준표 (정오 + 0~4점 척도)</div>
+  </div>
+
+  <div class="card-preview-container">
+    <img class="card-preview" src="./%EC%A7%81%EC%82%AC%EA%B0%81%ED%98%95_%EC%9B%80%EC%A7%81%EC%9D%B4%EB%8A%94%EC%A0%90_%EC%82%AC%EB%8B%A4%EB%A6%AC%EA%BC%B4_%EB%AC%B8%EC%A0%9C%EB%93%B1%EB%A1%9D%ED%99%94%EB%A9%B4.png" alt="문제 등록 카드 미리보기">
+  </div>
+
+  <div class="section-title">1. 최종 정답 및 교과서 표준 모범답안</div>
+  <div class="info-box">
+    <div id="final-answer-box" data-final-answer="(1) y = 8x + 60, (2) 4초 후" style="margin-bottom: 5px;"><strong>[최종 정답 (정오 판단 기준)]</strong> (1) $y = 8x + 60$ &nbsp; (2) $4$초 후</div>
+    <div><strong>[기본 모범답안]</strong> (1) 직사각형 $\mathrm{ABCD}$에서 $\overline{\mathrm{AD}} \parallel \overline{\mathrm{BC}}$이므로 $\overline{\mathrm{AD}} \parallel \overline{\mathrm{BP}}$이고 $\angle\mathrm{B}=90^\circ$이므로 사각형 $\mathrm{ABPD}$는 윗변 $\overline{\mathrm{AD}}=15\text{ cm}$, 아랫변 $\overline{\mathrm{BP}}=2x\text{ cm}$, 높이 $\overline{\mathrm{AB}}=8\text{ cm}$인 사다리꼴이다. 따라서 $y = \frac{1}{2} \times (15 + 2x) \times 8 = 8x + 60$이다. (2) $y = 92$를 대입하면 $8x + 60 = 92$, $8x = 32$이므로 $x = 4$이다. 이는 $0 < x \le 7.5$를 만족하므로 출발한 지 $4$초 후이다.</div>
+  </div>
+
+  <div class="section-title">2. 설명 점수 채점 기준표 (스노클 0~4점 정수 척도)</div>
+  <table>
+    <thead>
+      <tr>
+        <th class="th-stage">성취 요소</th>
+        <th class="th-full">충족 기준 (필기·도형·음성 통합)</th>
+        <th class="th-partial">감점·오류 이월 및 경계 처리</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>① 도형·길이 관계 (1점)</strong></td>
+        <td>점 $\mathrm{P}$의 이동 거리 $\overline{\mathrm{BP}} = 2x$와 사다리꼴(또는 넓이 분할)의 밑변·높이 관계를 필기·도형·음성으로 제시함</td>
+        <td>'사다리꼴' 명칭을 생략했어도 $\overline{\mathrm{AD}}=15$, $\overline{\mathrm{BP}}=2x$, 높이 $8$ 관계가 드러나면 인정</td>
+      </tr>
+      <tr>
+        <td><strong>② (1) 관계식 도출 (1점)</strong></td>
+        <td>$y = \frac{1}{2}(15 + 2x)\times 8$ 또는 동치 식을 세워 $y = 8x + 60$을 올바르게 도출함</td>
+        <td>전개 전 동치 식 $y = 4(15+2x)$도 발문에 전개 강제가 없으므로 인정; $\frac{1}{2}$ 누락 등 개념 오류는 미충족</td>
+      </tr>
+      <tr>
+        <td><strong>③ (2) 방정식 수립·풀이 (1점)</strong></td>
+        <td>(1)의 관계식에 $y = 92$를 대입하여 일차방정식 $8x + 60 = 92$를 세우고 일관되게 풀어 $x$를 구함</td>
+        <td>(1)의 단순 계산 실수 식을 대입해 일관되게 푼 경우 오류 이월 인정(단, 상수식 등 구조 붕괴 식은 불인정)</td>
+      </tr>
+      <tr>
+        <td><strong>④ 최종 결론 완결 (1점)</strong></td>
+        <td>타당한 풀이·음성 근거를 바탕으로 출발한 지 $4$초 후($x = 4$)임을 명확히 답함</td>
+        <td>$0 < x \le 7.5$ 범위 확인 언급은 권장 사항이며 생략해도 감점하지 않음; 근거 없는 단답은 설명 점수 $0$점</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="info-box" style="padding: 5px 10px; font-size: 10.4px;"><strong>[0~4점 정수 매핑]</strong> <strong>4점</strong>: ①~④ 전 요소 충족 / <strong>3점</strong>: 핵심 추론 완결 후 단순 연산 실수 1건(오류 이월) 또는 일부 서술 경미 미흡 / <strong>2점</strong>: (1)만 완결 또는 식 수립·방정식 풀이 중 2개 요소만 충족 / <strong>1점</strong>: $\overline{\mathrm{BP}}=2x$ 등 초기 조건 파악만 성공 / <strong>0점</strong>: 근거 없는 답 단독 기재 또는 무관한 응답</div>
+
+  <div class="section-title">3. 다른 풀이 및 대체 인정 기준</div>
+  <div class="alt-solutions-box">
+    <div style="margin-bottom: 4px;"><strong>별해 1 (직사각형에서 직각삼각형 넓이 빼기 / 직사각형+직각삼각형 분할)</strong>: 직사각형 $\mathrm{ABCD}$의 넓이 $15\times 8=120$에서 $\overline{\mathrm{PC}}=15-2x$인 직각삼각형 $\mathrm{DPC}$의 넓이 $\frac{1}{2}\times(15-2x)\times 8 = 60-8x$를 빼어 $y = 120-(60-8x)=8x+60$을 구함(또는 $x=0$일 때 $\triangle\mathrm{ABD}=60$에 $\triangle\mathrm{DBP}=8x$를 더함). <span style="color:#0369A1;">➔ [인정 기준] $\overline{\mathrm{PC}}=15-2x$(또는 분할 삼각형 밑변·높이) 제시 시 ① 인정, 넓이 차·합으로 $y=8x+60$ 도출 시 ② 동등 인정</span></div>
+  </div>
+
+  <div class="section-title">4. AI 억지감점 방지 및 문항 특화 채점 원칙</div>
+  <div class="guardrails-box">
+    <ul class="guardrails-list">
+      <li><strong>스노클 이원 채점(정오 + 0~4점 정수)</strong>: 최종 답 정오(Correct/Incorrect)와 풀이 설명 점수($0, 1, 2, 3, 4$ 정수)를 분리하며, AI 채점에 $0.5$점 단위를 강제하지 않음.</li>
+      <li><strong>필기·도형·음성(Voice) 통합 근거 인정</strong>: 결론 근거를 직전 식에 한정하지 않고 답안 전체의 필기·도형 표시·음성 설명에서 인정하며, 발화 중 자기 정정은 최종 의도 기준으로 채점.</li>
+      <li><strong>정답 단독 기재</strong>: 설명 요구 문항에서 필기·도형·음성 근거가 전무한 단순 정답 기재는 설명 점수 $0$점 처리(단순 암산 중간 줄 생략은 허용).</li>
+      <li><strong>오류 이월(발생 지점 1회 감점)</strong>: 최초 오류 지점만 감점하고 그 결과와 논리적으로 일관된 후속 전개는 중복 감점 금지(단, 핵심 개념 훼손·난이도 붕괴 오류는 이월 불인정).</li>
+      <li><strong>선행·대안 방법 및 표현 자율성</strong>: 발문의 방법 제한이 없는 한 수학적으로 타당한 선행·별해와 동치 표기·순서 변경을 인정하며, 앞선 논증을 부정하는 모순 서술만 감점.</li>
+      <li><strong>[문항 특화]</strong> 단위 생략 허용: 최종 답을 '$4$', '$4$초', '$4$초 후', '$x=4$' 중 어느 형태로 적어도 정답 및 결론 요소 인정.</li>
+      <li><strong>[문항 특화]</strong> 속력·거리 역산 풀이 인정: (2)에서 사다리꼴 넓이 $92 = \frac{1}{2}\times(15+\overline{\mathrm{BP}})\times 8$로 $\overline{\mathrm{BP}}=8\text{ cm}$를 먼저 구한 뒤 $8\div 2=4$(초)로 구한 풀이도 ③·④ 완전 인정.</li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    <span>Snorkl Rubric Architect v15.0</span>
+    <span>https://teacher.snorkl.app/home</span>
+  </div>
+
+  <script>
+    (function() {
+      document.documentElement.dataset.renderStatus = 'pending';
+      const baseErrors = [];
+      if (typeof renderMathInElement !== 'function') {
+        baseErrors.push('katex_not_loaded');
+      } else {
+        try {
+          renderMathInElement(document.body, {
+            delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false}
+            ],
+            throwOnError: false,
+            strict: false
+          });
+        } catch (err) {
+          baseErrors.push('katex_exception:' + String(err));
+        }
+      }
+
+      function finalizeAudit() {
+        const errors = baseErrors.slice();
+        const katexErrors = document.querySelectorAll('.katex-error');
+        if (katexErrors.length > 0) {
+          const detail = Array.from(katexErrors).map(function(e) { return e.textContent.trim(); }).join('|');
+          errors.push('katex_parse_error:' + detail);
+        }
+
+        const clone = document.body.cloneNode(true);
+        clone.querySelectorAll('script, style, svg').forEach(function(el) { el.remove(); });
+        if (clone.textContent.indexOf('$') !== -1) {
+          errors.push('unrendered_dollar_in_dom');
+        }
+
+        document.querySelectorAll('img').forEach(function(img) {
+          if (!img.complete || img.naturalWidth === 0) {
+            errors.push('broken_image:' + (img.getAttribute('src') || 'unknown'));
+          }
+        });
+
+        document.querySelectorAll('body, table, .info-box, .alt-solutions-box, .guardrails-box').forEach(function(el) {
+          const cs = window.getComputedStyle(el);
+          const fs = parseFloat(cs.fontSize || '11');
+          if (fs < 9.5) {
+            errors.push('font_too_small:' + (el.className || el.tagName) + '(' + fs + 'px)');
+          }
+          if (cs.overflow === 'hidden' || cs.overflowY === 'hidden') {
+            errors.push('illegal_overflow_clipping:' + (el.className || el.tagName));
+          }
+          if (el.scrollWidth > el.clientWidth + 6) {
+            errors.push('horizontal_overflow:' + (el.className || el.tagName));
+          }
+        });
+
+        document.documentElement.dataset.renderStatus = errors.length === 0 ? 'ok' : errors.join(';');
+        document.documentElement.dataset.renderReady = 'true';
+      }
+
+      finalizeAudit();
+
+      const fontPromise = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+      const imagePromises = Array.from(document.images || []).map(function(img) {
+        return img.complete ? Promise.resolve() : new Promise(function(resolve) {
+          img.addEventListener('load', resolve, { once: true });
+          img.addEventListener('error', resolve, { once: true });
+        });
+      });
+
+      Promise.all([fontPromise].concat(imagePromises)).then(function() {
+        setTimeout(finalizeAudit, 20);
+      });
+    })();
+  </script>
+</body>
+</html>

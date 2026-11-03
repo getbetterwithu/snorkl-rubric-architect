@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="snorkl-spec-sha256" content="9a1aedf77c597720">
+  <meta name="snorkl-final-answer" content="3">
+  <link rel="stylesheet" href="../../scripts/vendor/katex/katex.min.css">
+  <script src="../../scripts/vendor/katex/katex.min.js"></script>
+  <script src="../../scripts/vendor/katex/contrib/auto-render.min.js"></script>
+  <style>
+    :root {
+      --left-width: 430px;
+      --divider-left: 470px;
+      --right-left: 490px;
+      --right-width: 480px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      width: 1000px;
+      height: 500px;
+      background: #FFFFFF;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Pretendard", "Noto Sans KR", sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .card {
+      width: 996px;
+      height: 496px;
+      background: #FFFFFF;
+      border: 2px solid #E2E8F0;
+      border-radius: 16px;
+      display: flex;
+      padding: 22px 36px;
+      position: relative;
+    }
+    .divider {
+      position: absolute;
+      left: var(--divider-left);
+      top: 24px;
+      bottom: 24px;
+      width: 1px;
+      border-left: 2px dashed #CBD5E1;
+    }
+    .passage {
+      width: var(--left-width);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      color: #0F172A;
+      font-size: 19.5px;
+      line-height: 1.6;
+      letter-spacing: -0.3px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+    .category-tag {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0284C7;
+      margin-bottom: 8px;
+      letter-spacing: -0.2px;
+    }
+    .problem-header {
+      font-size: 20.5px;
+      font-weight: 700;
+      color: #0F172A;
+      line-height: 1.44;
+      margin-bottom: 8px;
+      letter-spacing: -0.35px;
+    }
+    .problem-formula {
+      margin: 8px 0;
+      padding: 10px 16px;
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      font-size: 1.12em;
+      min-height: 52px;
+    }
+    .problem-formula .katex-display {
+      margin: 0;
+      text-align: left;
+    }
+    .passage .katex {
+      font-family: KaTeX_Main, "Times New Roman", serif;
+    }
+    .target-question {
+      margin-top: 8px;
+      font-size: 19px;
+      font-weight: 700;
+      color: #0F172A;
+      line-height: 1.46;
+      letter-spacing: -0.3px;
+    }
+    .condition-text {
+      margin-top: 8px;
+      font-size: 13.5px;
+      color: #64748B;
+      font-weight: 500;
+    }
+    .geometry {
+      position: absolute;
+      left: var(--right-left);
+      top: 20px;
+      width: var(--right-width);
+      height: 456px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .student-workspace {
+      position: absolute;
+      left: var(--right-left);
+      top: 24px;
+      width: 476px;
+      height: 448px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 10px 14px 14px 14px;
+    }
+    .workspace-top {
+      display: flex;
+      justify-content: flex-start;
+    }
+    .workspace-badge {
+      font-size: 13px;
+      font-weight: 600;
+      color: #64748B;
+      background: #F1F5F9;
+      border: 1px solid #E2E8F0;
+      border-radius: 6px;
+      padding: 4px 10px;
+      letter-spacing: -0.2px;
+    }
+    .workspace-middle {
+      flex: 1;
+      width: 100%;
+    }
+    .workspace-bottom {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .workspace-bottom-hint {
+      font-size: 13px;
+      color: #94A3B8;
+      letter-spacing: -0.2px;
+    }
+    svg {
+      overflow: visible;
+    }
+    .vertex-label {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 24px;
+      font-weight: bold;
+      fill: #1E293B;
+    }
+    .dim-halo {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 18px;
+      font-weight: bold;
+      fill: #0F172A;
+      paint-order: stroke fill;
+      stroke: #FFFFFF;
+      stroke-width: 7px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+    .dim-var {
+      font-family: KaTeX_Math, "Times New Roman", serif;
+      font-style: italic;
+      font-size: 18px;
+      font-weight: bold;
+      fill: #0F172A;
+      paint-order: stroke fill;
+      stroke: #FFFFFF;
+      stroke-width: 7px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+    .angle-label {
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Times New Roman", sans-serif;
+      font-size: 16px;
+      font-weight: bold;
+      fill: #0F172A;
+      paint-order: stroke fill;
+      stroke: #FFFFFF;
+      stroke-width: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="passage">
+      <div class="category-tag">2022 개정 중2 수학 | 변화와 관계 · 일차부등식</div>
+      <div class="problem-header">다음 일차부등식을 만족시키는 가장 큰 자연수 $x$의 값을 구하려고 한다.</div>
+      <div class="problem-formula">$$\frac{2}{5}x - \frac{1}{2} > \frac{2x - 4}{3}$$</div>
+      <div class="target-question">부등식의 성질을 이용하여 주어진 일차부등식의 해를 구하고, 이를 만족시키는 가장 큰 자연수 $x$의 값을 풀이 과정과 함께 서술하시오.</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 오른쪽 영역: 기하 SVG(.geometry) 또는 학생 화이트보드 여백(.student-workspace) -->
+    <div class="student-workspace">
+      <div class="workspace-top"><span class="workspace-badge">✏️ 풀이 과정을 자유롭게 적어 보세요</span></div>
+      <div class="workspace-middle"></div>
+      <div class="workspace-bottom"><span class="workspace-bottom-hint">식과 이유를 함께 말하거나 적어 주면 더 정확한 피드백을 받을 수 있습니다.</span></div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      document.documentElement.dataset.renderStatus = 'pending';
+      const baseErrors = [];
+      if (typeof renderMathInElement !== 'function') {
+        baseErrors.push('katex_not_loaded');
+      } else {
+        try {
+          renderMathInElement(document.body, {
+            delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false}
+            ],
+            throwOnError: false,
+            strict: false
+          });
+        } catch (err) {
+          baseErrors.push('katex_exception:' + String(err));
+        }
+      }
+
+      function finalizeAudit() {
+        const errors = baseErrors.slice();
+        const katexErrors = document.querySelectorAll('.katex-error');
+        if (katexErrors.length > 0) {
+          const detail = Array.from(katexErrors).map(function(e) { return e.textContent.trim(); }).join('|');
+          errors.push('katex_parse_error:' + detail);
+        }
+
+        const clone = document.body.cloneNode(true);
+        clone.querySelectorAll('script, style, svg').forEach(function(el) { el.remove(); });
+        if (clone.textContent.indexOf('$') !== -1) {
+          errors.push('unrendered_dollar_in_dom');
+        }
+
+        document.querySelectorAll('.card, .passage, .problem-formula').forEach(function(el) {
+          if (el.scrollHeight > el.clientHeight + 2 || el.scrollWidth > el.clientWidth + 2) {
+            errors.push('layout_overflow:' + el.className);
+          }
+        });
+
+        const passage = document.querySelector('.passage');
+        if (passage) {
+          const fs = parseFloat(window.getComputedStyle(passage).fontSize || '20');
+          if (fs < 15.0) {
+            errors.push('font_too_small:passage(' + fs + 'px)');
+          }
+        }
+
+        document.querySelectorAll('img').forEach(function(img) {
+          if (!img.complete || img.naturalWidth === 0) {
+            errors.push('broken_image:' + (img.getAttribute('src') || 'unknown'));
+          }
+        });
+
+        document.documentElement.dataset.renderStatus = errors.length === 0 ? 'ok' : errors.join(';');
+        document.documentElement.dataset.renderReady = 'true';
+      }
+
+      finalizeAudit();
+
+      const fontPromise = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+      const imagePromises = Array.from(document.images || []).map(function(img) {
+        return img.complete ? Promise.resolve() : new Promise(function(resolve) {
+          img.addEventListener('load', resolve, { once: true });
+          img.addEventListener('error', resolve, { once: true });
+        });
+      });
+
+      Promise.all([fontPromise].concat(imagePromises)).then(function() {
+        setTimeout(finalizeAudit, 20);
+      });
+    })();
+  </script>
+</body>
+</html>

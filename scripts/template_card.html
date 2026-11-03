@@ -2,10 +2,16 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+  <link rel="stylesheet" href="./vendor/katex/katex.min.css">
+  <script src="./vendor/katex/katex.min.js"></script>
+  <script src="./vendor/katex/contrib/auto-render.min.js"></script>
   <style>
+    :root {
+      --left-width: 430px;
+      --divider-left: 470px;
+      --right-left: 490px;
+      --right-width: 480px;
+    }
     * { box-sizing: border-box; }
     body {
       margin: 0;
@@ -13,7 +19,7 @@
       width: 1000px;
       height: 500px;
       background: #FFFFFF;
-      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Pretendard", "Noto Sans KR", sans-serif;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -26,54 +32,56 @@
       border: 2px solid #E2E8F0;
       border-radius: 16px;
       display: flex;
-      padding: 30px 40px;
+      padding: 22px 36px;
       position: relative;
     }
     .divider {
       position: absolute;
-      left: 470px;
-      top: 30px;
-      bottom: 30px;
+      left: var(--divider-left);
+      top: 24px;
+      bottom: 24px;
       width: 1px;
       border-left: 2px dashed #CBD5E1;
     }
     .passage {
-      width: 430px;
+      width: var(--left-width);
       height: 100%;
       display: flex;
       flex-direction: column;
       justify-content: center;
       color: #0F172A;
-      font-size: 21px;
-      line-height: 1.7;
+      font-size: 19.5px;
+      line-height: 1.6;
       letter-spacing: -0.3px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
     }
     .category-tag {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
       color: #0284C7;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       letter-spacing: -0.2px;
     }
     .problem-header {
-      font-size: 24px;
+      font-size: 20.5px;
       font-weight: 700;
       color: #0F172A;
-      line-height: 1.45;
-      margin-bottom: 12px;
-      letter-spacing: -0.5px;
+      line-height: 1.44;
+      margin-bottom: 8px;
+      letter-spacing: -0.35px;
     }
     .problem-formula {
-      margin: 14px 0;
-      padding: 12px 16px;
+      margin: 8px 0;
+      padding: 10px 16px;
       background: #F8FAFC;
       border: 1px solid #E2E8F0;
       border-radius: 10px;
       display: flex;
       justify-content: flex-start;
       align-items: center;
-      font-size: 1.15em;
-      min-height: 58px;
+      font-size: 1.12em;
+      min-height: 52px;
     }
     .problem-formula .katex-display {
       margin: 0;
@@ -83,24 +91,24 @@
       font-family: KaTeX_Main, "Times New Roman", serif;
     }
     .target-question {
-      margin-top: 14px;
-      font-size: 21px;
+      margin-top: 8px;
+      font-size: 19px;
       font-weight: 700;
       color: #0F172A;
-      line-height: 1.5;
-      letter-spacing: -0.4px;
+      line-height: 1.46;
+      letter-spacing: -0.3px;
     }
     .condition-text {
-      margin-top: 14px;
-      font-size: 14px;
+      margin-top: 8px;
+      font-size: 13.5px;
       color: #64748B;
-      font-weight: 400;
+      font-weight: 500;
     }
     .geometry {
       position: absolute;
-      left: 490px;
+      left: var(--right-left);
       top: 20px;
-      width: 480px;
+      width: var(--right-width);
       height: 456px;
       display: flex;
       align-items: center;
@@ -108,10 +116,10 @@
     }
     .student-workspace {
       position: absolute;
-      left: 490px;
-      top: 25px;
+      left: var(--right-left);
+      top: 24px;
       width: 476px;
-      height: 446px;
+      height: 448px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -165,7 +173,7 @@
       stroke-linecap: round;
     }
     .dim-var {
-      font-family: KaTeX_Math, "Times New Roman", italic, serif;
+      font-family: KaTeX_Math, "Times New Roman", serif;
       font-style: italic;
       font-size: 18px;
       font-weight: bold;
@@ -177,7 +185,7 @@
       stroke-linecap: round;
     }
     .angle-label {
-      font-family: -apple-system, BlinkMacSystemFont, "Times New Roman", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Times New Roman", sans-serif;
       font-size: 16px;
       font-weight: bold;
       fill: #0F172A;
@@ -195,17 +203,83 @@
 
     <div class="divider"></div>
 
-    <!-- 비도형 대수 문항용 학생 필기 공간 (기본) -->
+    <!-- 오른쪽 영역: 기하 SVG(.geometry) 또는 학생 화이트보드 여백(.student-workspace) -->
     <!-- RIGHT_PANEL_PLACEHOLDER -->
   </div>
 
   <script>
-    renderMathInElement(document.body, {
-      delimiters: [
-        {left: '$$', right: '$$', display: true},
-        {left: '$', right: '$', display: false}
-      ]
-    });
+    (function() {
+      document.documentElement.dataset.renderStatus = 'pending';
+      const baseErrors = [];
+      if (typeof renderMathInElement !== 'function') {
+        baseErrors.push('katex_not_loaded');
+      } else {
+        try {
+          renderMathInElement(document.body, {
+            delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false}
+            ],
+            throwOnError: false,
+            strict: false
+          });
+        } catch (err) {
+          baseErrors.push('katex_exception:' + String(err));
+        }
+      }
+
+      function finalizeAudit() {
+        const errors = baseErrors.slice();
+        const katexErrors = document.querySelectorAll('.katex-error');
+        if (katexErrors.length > 0) {
+          const detail = Array.from(katexErrors).map(function(e) { return e.textContent.trim(); }).join('|');
+          errors.push('katex_parse_error:' + detail);
+        }
+
+        const clone = document.body.cloneNode(true);
+        clone.querySelectorAll('script, style, svg').forEach(function(el) { el.remove(); });
+        if (clone.textContent.indexOf('$') !== -1) {
+          errors.push('unrendered_dollar_in_dom');
+        }
+
+        document.querySelectorAll('.card, .passage, .problem-formula').forEach(function(el) {
+          if (el.scrollHeight > el.clientHeight + 2 || el.scrollWidth > el.clientWidth + 2) {
+            errors.push('layout_overflow:' + el.className);
+          }
+        });
+
+        const passage = document.querySelector('.passage');
+        if (passage) {
+          const fs = parseFloat(window.getComputedStyle(passage).fontSize || '20');
+          if (fs < 15.0) {
+            errors.push('font_too_small:passage(' + fs + 'px)');
+          }
+        }
+
+        document.querySelectorAll('img').forEach(function(img) {
+          if (!img.complete || img.naturalWidth === 0) {
+            errors.push('broken_image:' + (img.getAttribute('src') || 'unknown'));
+          }
+        });
+
+        document.documentElement.dataset.renderStatus = errors.length === 0 ? 'ok' : errors.join(';');
+        document.documentElement.dataset.renderReady = 'true';
+      }
+
+      finalizeAudit();
+
+      const fontPromise = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+      const imagePromises = Array.from(document.images || []).map(function(img) {
+        return img.complete ? Promise.resolve() : new Promise(function(resolve) {
+          img.addEventListener('load', resolve, { once: true });
+          img.addEventListener('error', resolve, { once: true });
+        });
+      });
+
+      Promise.all([fontPromise].concat(imagePromises)).then(function() {
+        setTimeout(finalizeAudit, 20);
+      });
+    })();
   </script>
 </body>
 </html>

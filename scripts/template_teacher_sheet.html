@@ -3,70 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <title><!-- TITLE_PLACEHOLDER --> - 교사 참고용 채점기준표</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+  <link rel="stylesheet" href="./vendor/katex/katex.min.css">
+  <script src="./vendor/katex/katex.min.js"></script>
+  <script src="./vendor/katex/contrib/auto-render.min.js"></script>
   <style>
     @page {
       size: A4 portrait;
-      margin: 10mm 12mm 10mm 12mm;
+      margin: 8.5mm 11mm 8.5mm 11mm;
     }
     * { box-sizing: border-box; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Pretendard", "Noto Sans KR", sans-serif;
       color: #0F172A;
       background: #FFFFFF;
       margin: 0;
       padding: 0;
-      font-size: 11.5px;
-      line-height: 1.5;
+      font-size: 11px;
+      line-height: 1.48;
+      word-break: keep-all;
+      overflow-wrap: break-word;
     }
     .header {
       border-bottom: 2px solid #0F172A;
-      padding-bottom: 6px;
-      margin-bottom: 10px;
+      padding-bottom: 5px;
+      margin-bottom: 8px;
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
     }
     .header h1 {
       margin: 0;
-      font-size: 18px;
+      font-size: 17.5px;
       font-weight: 800;
       letter-spacing: -0.4px;
       color: #0F172A;
     }
     .header .tag {
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 600;
       color: #334155;
       background: #F1F5F9;
       border: 1px solid #E2E8F0;
       padding: 2px 7px;
       border-radius: 4px;
+      white-space: nowrap;
     }
     .section-title {
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 700;
       color: #1E293B;
       border-left: 3px solid #0284C7;
       padding-left: 6px;
-      margin: 10px 0 6px 0;
+      margin: 8px 0 5px 0;
       letter-spacing: -0.2px;
       page-break-after: avoid;
     }
     .card-preview-container {
       text-align: center;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       page-break-inside: avoid;
     }
     .card-preview {
-      width: 100%;
-      max-height: 180px;
+      width: auto;
+      max-width: 100%;
+      max-height: 145px;
       object-fit: contain;
       border: 1px solid #CBD5E1;
       border-radius: 6px;
-      background: #F8FAFC;
+      background: #FFFFFF;
       display: block;
       margin: 0 auto;
     }
@@ -74,21 +78,21 @@
       background: #F8FAFC;
       border: 1px solid #E2E8F0;
       border-radius: 6px;
-      padding: 8px 12px;
-      margin-bottom: 8px;
-      font-size: 11.5px;
+      padding: 7px 11px;
+      margin-bottom: 7px;
+      font-size: 11px;
       page-break-inside: avoid;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 6px 0 10px 0;
-      font-size: 11px;
+      margin: 5px 0 8px 0;
+      font-size: 10.8px;
       page-break-inside: avoid;
     }
     th, td {
       border: 1px solid #CBD5E1;
-      padding: 5px 8px;
+      padding: 4.5px 7px;
       text-align: left;
       vertical-align: top;
     }
@@ -97,46 +101,46 @@
       font-weight: 700;
       color: #1E293B;
     }
-    .th-stage { width: 17%; }
-    .th-full { width: 43%; }
-    .th-partial { width: 40%; }
+    .th-stage { width: 19%; }
+    .th-full { width: 45%; }
+    .th-partial { width: 36%; }
     .alt-solutions-box {
       background: #FFFFFF;
       border: 1px solid #E2E8F0;
       border-radius: 6px;
-      padding: 8px 12px;
-      margin-bottom: 8px;
-      font-size: 11px;
+      padding: 7px 11px;
+      margin-bottom: 7px;
+      font-size: 10.8px;
       page-break-inside: avoid;
     }
     .guardrails-box {
       background: #F8FAFC;
       border: 1px solid #E2E8F0;
       border-radius: 6px;
-      padding: 6px 12px;
-      font-size: 10.5px;
+      padding: 6px 11px;
+      font-size: 10.3px;
       color: #334155;
       page-break-inside: avoid;
     }
     .guardrails-list {
-      margin: 4px 0;
-      padding-left: 18px;
-      line-height: 1.45;
+      margin: 3px 0;
+      padding-left: 17px;
+      line-height: 1.42;
     }
     .guardrails-list li {
       margin-bottom: 2px;
     }
     .footer {
-      margin-top: 12px;
+      margin-top: 8px;
       border-top: 1px solid #E2E8F0;
       padding-top: 4px;
       font-size: 10px;
-      color: #94A3B8;
+      color: #64748B;
       display: flex;
       justify-content: space-between;
       page-break-before: avoid;
     }
-    .katex { font-size: 1.04em; }
+    .katex { font-size: 1.03em; }
   </style>
 </head>
 <body>
@@ -145,23 +149,89 @@
       <span style="font-size: 10px; color: #0284C7; font-weight: 700; letter-spacing: 0.5px;">SNORKL 서논술형 평가</span>
       <h1><!-- TITLE_PLACEHOLDER --></h1>
     </div>
-    <div class="tag">교사 참고용 마스터 기준표 (4점 만점)</div>
+    <div class="tag">교사 참고용 마스터 기준표 (정오 + 0~4점 척도)</div>
   </div>
 
   <!-- CONTENT_HTML_PLACEHOLDER -->
 
   <div class="footer">
-    <span>Snorkl Rubric Architect v14.1 Master Edition</span>
+    <span>Snorkl Rubric Architect v15.0</span>
     <span>https://teacher.snorkl.app/home</span>
   </div>
 
   <script>
-    renderMathInElement(document.body, {
-      delimiters: [
-        {left: '$$', right: '$$', display: true},
-        {left: '$', right: '$', display: false}
-      ]
-    });
+    (function() {
+      document.documentElement.dataset.renderStatus = 'pending';
+      const baseErrors = [];
+      if (typeof renderMathInElement !== 'function') {
+        baseErrors.push('katex_not_loaded');
+      } else {
+        try {
+          renderMathInElement(document.body, {
+            delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false}
+            ],
+            throwOnError: false,
+            strict: false
+          });
+        } catch (err) {
+          baseErrors.push('katex_exception:' + String(err));
+        }
+      }
+
+      function finalizeAudit() {
+        const errors = baseErrors.slice();
+        const katexErrors = document.querySelectorAll('.katex-error');
+        if (katexErrors.length > 0) {
+          const detail = Array.from(katexErrors).map(function(e) { return e.textContent.trim(); }).join('|');
+          errors.push('katex_parse_error:' + detail);
+        }
+
+        const clone = document.body.cloneNode(true);
+        clone.querySelectorAll('script, style, svg').forEach(function(el) { el.remove(); });
+        if (clone.textContent.indexOf('$') !== -1) {
+          errors.push('unrendered_dollar_in_dom');
+        }
+
+        document.querySelectorAll('img').forEach(function(img) {
+          if (!img.complete || img.naturalWidth === 0) {
+            errors.push('broken_image:' + (img.getAttribute('src') || 'unknown'));
+          }
+        });
+
+        document.querySelectorAll('body, table, .info-box, .alt-solutions-box, .guardrails-box').forEach(function(el) {
+          const cs = window.getComputedStyle(el);
+          const fs = parseFloat(cs.fontSize || '11');
+          if (fs < 9.5) {
+            errors.push('font_too_small:' + (el.className || el.tagName) + '(' + fs + 'px)');
+          }
+          if (cs.overflow === 'hidden' || cs.overflowY === 'hidden') {
+            errors.push('illegal_overflow_clipping:' + (el.className || el.tagName));
+          }
+          if (el.scrollWidth > el.clientWidth + 6) {
+            errors.push('horizontal_overflow:' + (el.className || el.tagName));
+          }
+        });
+
+        document.documentElement.dataset.renderStatus = errors.length === 0 ? 'ok' : errors.join(';');
+        document.documentElement.dataset.renderReady = 'true';
+      }
+
+      finalizeAudit();
+
+      const fontPromise = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+      const imagePromises = Array.from(document.images || []).map(function(img) {
+        return img.complete ? Promise.resolve() : new Promise(function(resolve) {
+          img.addEventListener('load', resolve, { once: true });
+          img.addEventListener('error', resolve, { once: true });
+        });
+      });
+
+      Promise.all([fontPromise].concat(imagePromises)).then(function() {
+        setTimeout(finalizeAudit, 20);
+      });
+    })();
   </script>
 </body>
 </html>

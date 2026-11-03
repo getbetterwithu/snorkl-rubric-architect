@@ -1,116 +1,107 @@
-# Snorkl Rubric Architect 📐✨ (v14.2.3)
+# Snorkl Rubric Architect 📐✨ (v15.0)
 
-> **Snorkl(스노클) 수학 서논술형 문항 캔버스 및 AI 4단계 정밀 루브릭 설계 시스템**  
-> Windows 및 macOS를 모두 지원하며, Claude Code, Google Antigravity, OpenAI Codex, Aside 등 모든 주요 AI 에이전트에서 동작하는 크로스 플랫폼 수학 문항 저작 스킬입니다.
+> **Snorkl(스노클) 중학교 수학 서논술형 문항 캔버스 · 정밀 채점 루브릭 · 교사용 A4 기준표 통합 저작 스킬**  
+> Windows와 macOS를 모두 지원하며, Claude Code, Google Antigravity, OpenAI Codex, Aside 등 주요 AI 코딩 에이전트에서 동작합니다.
 
-[![Skill Standard](https://img.shields.io/badge/Agent_Skill-v14.2.3-blue.svg)](https://github.com/getbetterwithu/snorkl-rubric-architect)
+[![Skill Version](https://img.shields.io/badge/Agent_Skill-v15.0.0-blue.svg)](https://github.com/getbetterwithu/snorkl-rubric-architect)
 [![Platform](https://img.shields.io/badge/Platform-Windows_%7C_macOS_%7C_Claude_%7C_Gemini_%7C_Codex-green.svg)](https://github.com/getbetterwithu/snorkl-rubric-architect)
 [![License](https://img.shields.io/badge/License-MIT-orange.svg)](LICENSE)
 
 ---
 
-## 🚀 1초 원클릭 설치 (터미널 / PowerShell)
+## 🚀 설치 방법
 
-> 💡 **보안 안내**: 스크립트 실행 전 내용을 직접 확인하시려면 [install.ps1](https://github.com/getbetterwithu/snorkl-rubric-architect/blob/main/install.ps1) 또는 [install.sh](https://github.com/getbetterwithu/snorkl-rubric-architect/blob/main/install.sh)에서 코드를 검토하실 수 있습니다.
+> 💡 **보안 안내**: 원클릭 실행 전 스크립트 내용을 직접 검토하시려면 [install.ps1](https://github.com/getbetterwithu/snorkl-rubric-architect/blob/main/install.ps1) 또는 [install.sh](https://github.com/getbetterwithu/snorkl-rubric-architect/blob/main/install.sh)를 먼저 확인하시거나 아래 **수동 설치(`git clone`)** 방식을 사용하실 수 있습니다.
 
-### 🪟 Windows (PowerShell)
+### 1) 원클릭 자동 설치
+**🪟 Windows (PowerShell)**
 ```powershell
 irm https://raw.githubusercontent.com/getbetterwithu/snorkl-rubric-architect/main/install.ps1 | iex
 ```
 
-### 🍎 macOS / Linux (Terminal)
+**🍎 macOS / Linux (Terminal)**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/getbetterwithu/snorkl-rubric-architect/main/install.sh | bash
 ```
 
-> **자동 감지 및 연동**: 시스템에 이미 설치된 **Claude Code, Gemini/Antigravity, Codex, Aside** 상위 폴더를 자동 감지하여 해당 에이전트 경로에만 심볼릭 링크/Junction으로 안전하게 연동합니다.
-
----
-
-## 🔄 원클릭 업데이트
-
-터미널이나 PowerShell 어디서든 아래 한 줄로 최신 버전으로 즉시 갱신할 수 있습니다:
+### 2) 수동 검증 설치 (`git clone`)
 ```bash
-snorkl-update
+git clone https://github.com/getbetterwithu/snorkl-rubric-architect.git ~/.snorkl-rubric-architect
+# Windows PowerShell: powershell -ExecutionPolicy Bypass -File "$HOME\.snorkl-rubric-architect\install.ps1"
+# macOS / Linux:      bash ~/.snorkl-rubric-architect/install.sh
 ```
 
----
-
-## 💡 v14.2.3 핵심 기능 및 강화점
-
-### 1. 2022 개정 대한민국 중학 수학 전수 표준화 (`references/`)
-- 중1부터 중3까지 총 21개 전체 대단원의 **교과서 대표 풀이(1순위)**를 의무화.
-- 연립방정식 해의 개수 문제에서 고교 대수식 억지 증명($0 \cdot x = 0$)을 금지하고, 계수비($\frac{a}{a'} = \frac{b}{b'} = \frac{c}{c'}$)와 직선의 일치를 강제.
-- 역비(Reverse Ratio), 사후 비례 설명, 부호 1회 이월 등 실전 교실형 방어 원칙 내장.
-- 넓이 표기 시 경시대회식 대괄호(`[△ABC]`)를 엄격히 금지하고 교과서 표준(`△ABC의 넓이`) 준수.
-
-### 2. 기하 영역 수학적 무게중심 계산 및 자동 안착 엔진
-- `snorkl_geometry_engine.py`에 그린 정리 기반 면적 가중 무게중심(`polygon_centroid`) 및 `render_shaded_region()` 탑재.
-- 도형의 색칠된 영역 꼭짓점을 선분과 100% 밀착시키고, 면적 라벨($S$)을 영역의 수학적 무게중심에 화이트 헤일로와 함께 자동 안착.
-
-### 3. 수식 조판의 3원화 및 대화창 100% LaTeX 사전 탑재
-- **대화창 검토 (Step 1~4)**: `△, ∽` 등 날것의 유니코드 혼용을 금지하고, 100% 완전한 LaTeX 수식(`\triangle, \sim, \overline{AB}`)으로 조판.
-- **스노클 복사용**: 스노클 공식 웹 UI 명칭인 **`정답/평가 기준`**에 바로 붙여넣을 수 있도록 **LaTeX를 100% 배제한 순수 텍스트(Plain Text)**로 변환 제공.
-- **교사용 인쇄 PDF**: 스노클용 텍스트를 그대로 쓰지 않고, 교과서급 **KaTeX 마크다운 수식을 적용하여 A4 1페이지에 수납**.
-
-### 4. Windows 고해상도 렌더러 패치 (2000×1000 레티나)
-- `render_card.py`에 `--force-device-scale-factor=2`를 적용하여 Windows Edge 헤드리스에서도 여백 없이 꽉 찬 고화질 2000×1000 화이트보드 캔버스 생성 보장.
-
-### 5. 1턴 1단계 Hard Stop 강제 (AI 자가 폭주 방지)
-- AI가 자의적으로 단계를 건너뛰거나 한 번에 결과물을 쏟아내지 못하도록, 매 턴마다 출력을 즉시 중단하고 교사의 승인(`다음`, `좋아`)을 기다리도록 통제.
+설치 스크립트는 PC에 이미 설치된 에이전트 폴더(`~/.gemini`, `~/.claude`, `~/.codex`, `~/.agents`)만 감지하여 심볼릭 링크/Junction으로 안전하게 연결합니다.
 
 ---
 
-## 🏛️ 4단계 점진적 인터랙션 파이프라인
+## 💡 v15.0 핵심 특징
+
+1. **단일 원본 파이썬 빌더(`snorkl_builder.py`) & 자동 검증기(`validate_outputs.py`)**
+   - 하나의 확정 문항 객체(`ProblemSpec`)에서 **문제 카드 PNG(`2000×1000`) · 스노클 `정답/평가 기준` 텍스트(`.md`) · 교사용 기준표 PDF(A4)** 3종을 일관되게 생성합니다.
+   - 인도 직전 `validate_outputs.py`가 PNG 해상도 헤더, `.md` 내 LaTeX 유출 여부, DOM 레이아웃 넘침, PDF 페이지 수, **카드-MD-PDF 간 수치·정답 교차 일치성**을 코드로 검증합니다.
+2. **오프라인 100% 로컬 KaTeX 내장 (`scripts/vendor/katex/`)**
+   - `katex@0.16.8` 스크립트·스타일시트 및 참조 수식 웹폰트(`.woff2` 20종 전수)를 로컬 번들링하여 사내망·학교 방화벽·오프라인 환경에서도 수식 깨짐 없이 렌더링됩니다.
+3. **스노클 공식 이원 채점(`정오 판단 + 0~4점 정수 척도`) 및 음성(Voice) 통합**
+   - 스노클 AI 실제 채점 사양에 맞춰 **최종 답 정오 판단(Correct/Incorrect)**과 **풀이 설명 점수(`0, 1, 2, 3, 4` 정수 척도)**를 분리 설계하며, 화이트보드 필기·도형 표시·음성 녹음(발화 중 자기 정정 포함)을 통합 인정합니다.
+4. **2022 개정 중학교 수학과 교육과정 정밀 반영 (`references/korean_middle_math_standards.md`)**
+   - **[공식 교육과정 범위] · [교과서 서술 관행] · [학생 답안 채점 정책]** 3층위를 분리하여, 교사용 모범답안에서의 고교 선행 침범은 차단하되 발문 제한이 없는 학생의 타당한 별해·선행 풀이는 억지 감점하지 않습니다.
+5. **안전 기하 엔진 (`snorkl_geometry_engine.py`)**
+   - 평행선 교점 오류 즉시 검출(`ValueError`), ㄱ자형 등 오목다각형 내부 안전 라벨점 자동 보정(`interior_label_point`), 원·호·점선·치수호·좌표평면 작도 헬퍼를 기본 제공합니다.
+6. **매체별 수식 표기 3원화**
+   - **대화창(Step 1~4)**: 읽기 편한 한국어 수학 기호(`사각형 ABCD`, `△ABE ∽ △CDF`, `∠A = 90°`)
+   - **문제 카드 & 교사용 PDF**: 로컬 KaTeX 교과서급 수식 조판
+   - **스노클 복사용 `.md`**: `$` 및 백슬래시 명령어가 0개인 순수 텍스트(Plain Text)
+
+---
+
+## 🏛️ 단계별 협업 파이프라인 (검토 4단계 + 최종 산출)
 
 ```mermaid
-flowchart TD
-    In["교사의 입력 접수 (이미지 / 텍스트 / 아이디어)"] --> Step1["[1단계: 심층 분석 & 출제 방향 제안]"]
-    Step1 --> Stop1["🛑 즉시 출력 중단 (Hard Stop) & 교사 피드백 대기"]
-    Stop1 -->|교사의 방향 선택 및 승인| Step2["[2단계: 문제 화면(캔버스) 검토]"]
-    Step2 --> Stop2["🛑 즉시 출력 중단 (Hard Stop) & 교사 피드백 대기"]
-    Stop2 -->|교사 검토 및 승인 ('다음')| Step3["[3단계: 기본 모범답안 & 4단계 배점표 검토]"]
-    Step3 --> Stop3["🛑 즉시 출력 중단 (Hard Stop) & 교사 피드백 대기"]
-    Stop3 -->|교사 검토 및 승인 ('다음')| Step4["[4단계: 다른 풀이 & 공통 채점 원칙 검토]"]
-    Step4 --> Stop4["🛑 즉시 출력 중단 (Hard Stop) & 교사 피드백 대기"]
-    Stop4 -->|최종 승인 ('다음'/'완료')| Final["[최종 완결: 3종 세트 저장 & 스노클 링크 제공]"]
+flowchart LR
+    S1["Step 1: 사전 풀이 검증 + 방향 제안"] -->|교사 선택| S2["Step 2: 2000×1000 문제 카드 검토"]
+    S2 -->|승인| S3["Step 3: 표준 모범답안 + 0~4점 기준 검토"]
+    S3 -->|승인| S4["Step 4: 유효 별해(0~2개) + 가드레일 검토"]
+    S4 -->|최종 승인| S5["Step 5: 3종 생성 + validate_outputs.py 검증"]
+    S4 -.->|조건·발문 수정 시 역전파| S2
 ```
 
 ---
 
-## 📂 파일 구조
+## 📂 저장소 구조 및 회귀 테스트
 
-```
+```text
 snorkl-rubric-architect/
-├── SKILL.md                          # 에이전트 공용 프롬프트 및 지침 (v14.2.3)
-├── install.sh                        # macOS / Linux 원클릭 설치 스크립트
-├── install.ps1                       # Windows PowerShell 원클릭 설치 스크립트 (UTF-8 with BOM)
-├── publish.sh                        # 듀얼 레포 동기화 배포 스크립트
-├── .gitattributes                    # 줄바꿈 및 인코딩 보존 설정
-├── README.md                         # 사용자 안내 문서
+├── SKILL.md                             # 에이전트 실행 지침 (v15.0.0)
+├── LICENSE                              # MIT License
+├── README.md                            # 설치 및 사용 안내
+├── install.ps1 / install.sh             # Windows / macOS·Linux 설치·업데이트 스크립트
+├── publish.sh                           # 듀얼 레포 검증·배포 스크립트
 ├── references/
-│   └── korean_middle_math_standards.md # 2022 개정 중학 수학 21개 대단원 전수 표준 풀이 가이드
-└── scripts/
-    ├── template_card.html            # KaTeX 2000x1000 캔버스 마스터 HTML 템플릿
-    ├── template_teacher_sheet.html   # 교사용 A4 1페이지 컴팩트 채점기준표 템플릿
-    ├── snorkl_geometry_engine.py     # 기하 벡터 그래픽, 무게중심 계산 및 음영 엔진
-    ├── render_card.py                # Windows(Edge 2x) & macOS(WebKit) 초고속 PNG/PDF 렌더러
-    └── render_webkit.swift           # macOS WebKit 소스
+│   └── korean_middle_math_standards.md  # 2022 개정 중학 수학 3층위 표준 가이드
+├── scripts/
+│   ├── snorkl_builder.py                # 단일 원본(ProblemSpec) 3종 통합 빌더
+│   ├── validate_outputs.py              # 규격·DOM 넘침·교차 일치성 자동 검증기
+│   ├── snorkl_geometry_engine.py        # 안전 기하 벡터 & 내부 중심점 엔진
+│   ├── render_card.py                   # 크로스 플랫폼 무결점 PNG/PDF 렌더러
+│   ├── render_webkit.swift              # macOS WebKit 2x 네이티브 스냅샷 소스
+│   ├── template_card.html               # 2000×1000 카드 마스터 템플릿
+│   ├── template_teacher_sheet.html      # 교사용 A4 채점기준표 템플릿
+│   └── vendor/katex/                    # 로컬 KaTeX 0.16.8 + woff2 수식 폰트 20종
+├── examples/
+│   ├── geometry_trapezoid_motion/       # 골든 예제 1: 기하·방정식 소문항 혼합형
+│   └── algebra_linear_inequality/       # 골든 예제 2: 대수 화이트보드 여백형
+└── tests/
+    └── test_core.py                     # 기하·렌더러·검증기 자동 회귀 테스트
 ```
 
----
-
-## 🛠️ 지원 환경
-
-- **OS**: Windows 10/11 (Microsoft Edge 기본 탑재), macOS (WebKit 지원)
-- **AI 에이전트**:
-  - Google Antigravity / Gemini CLI (`~/.gemini/config/skills/`)
-  - Anthropic Claude Code (`~/.claude/skills/`)
-  - OpenAI Codex (`~/.codex/skills/`)
-  - Aside 및 Universal Agent Skills 지원 플랫폼 (`~/.agents/skills/`)
+```bash
+# 전체 단위·통합 회귀 테스트 실행
+python -m unittest discover -s tests -v
+```
 
 ---
 
 ## 📄 라이선스
 
-MIT License © 2026 BetterwithU & getbetterwithu. All rights reserved.
+[MIT License](LICENSE) © 2026 BetterwithU & getbetterwithu
