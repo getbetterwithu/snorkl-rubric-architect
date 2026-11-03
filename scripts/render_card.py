@@ -28,6 +28,7 @@ import struct
 import subprocess
 import sys
 import tempfile
+import zlib
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 VENDOR_KATEX_DIR = os.path.join(SCRIPT_DIR, "vendor", "katex")
@@ -84,16 +85,81 @@ def find_browser() -> str | None:
 
 
 def read_png_dimensions(png_path: str) -> tuple[int, int] | None:
-    """Read exact pixel (width, height) from PNG IHDR chunk without external libraries."""
+    """
+    Validate full PNG binary integrity (chunk framing, CRC32 on every chunk,
+    zlib-decompressible IDAT scanline payload, and trailing IEND) and return `(width, height)`.
+    Rejects truncated headers or corrupted PNG files without external dependencies.
+    """
     try:
         with open(png_path, "rb") as f:
-            header = f.read(24)
-        if len(header) < 24 or header[:8] != b"\x89PNG\r\n\x1a\n" or header[12:16] != b"IHDR":
-            return None
-        w, h = struct.unpack(">II", header[16:24])
-        return int(w), int(h)
+            raw = f.read()
     except OSError:
         return None
+
+    if len(raw) < 33 or raw[:8] != b"\x89PNG\r\n\x1a\n":
+        return None
+
+    pos = 8
+    dims: tuple[int, int] | None = None
+    ihdr_meta: tuple[int, int, int] | None = None
+    idat_parts: list[bytes] = []
+    saw_iend = False
+
+    while pos + 8 <= len(raw):
+        (length,) = struct.unpack(">I", raw[pos : pos + 4])
+        chunk_type = raw[pos + 4 : pos + 8]
+        data_start = pos + 8
+        data_end = data_start + length
+        crc_end = data_end + 4
+        if crc_end > len(raw):
+            return None
+
+        chunk_data = raw[data_start:data_end]
+        (expected_crc,) = struct.unpack(">I", raw[data_end:crc_end])
+        actual_crc = zlib.crc32(chunk_type + chunk_data) & 0xFFFFFFFF
+        if actual_crc != expected_crc:
+            return None
+
+        if chunk_type == b"IHDR":
+            if dims is not None or length != 13:
+                return None
+            w, h, bit_depth, color_type, comp, filt, interlace = struct.unpack(">IIBBBBB", chunk_data)
+            if w <= 0 or h <= 0 or comp != 0 or filt != 0:
+                return None
+            dims = (int(w), int(h))
+            ihdr_meta = (int(bit_depth), int(color_type), int(interlace))
+        elif chunk_type == b"IDAT":
+            idat_parts.append(chunk_data)
+        elif chunk_type == b"IEND":
+            if length != 0:
+                return None
+            saw_iend = True
+            pos = crc_end
+            break
+
+        pos = crc_end
+
+    if dims is None or ihdr_meta is None or not saw_iend or not idat_parts:
+        return None
+
+    try:
+        decompressed = zlib.decompress(b"".join(idat_parts))
+    except zlib.error:
+        return None
+
+    bit_depth, color_type, interlace = ihdr_meta
+    channels_map = {0: 1, 2: 3, 3: 1, 4: 2, 6: 4}
+    channels = channels_map.get(color_type)
+    if channels is None:
+        return None
+    if interlace == 0:
+        row_bytes = 1 + (dims[0] * channels * bit_depth + 7) // 8
+        if len(decompressed) != row_bytes * dims[1]:
+            return None
+    elif len(decompressed) == 0:
+        return None
+
+    return dims
 
 
 def get_macos_binary(script_dir: str) -> str | None:

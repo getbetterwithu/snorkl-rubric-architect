@@ -26,6 +26,7 @@ import json
 import os
 import pathlib
 import re
+import unicodedata
 from dataclasses import dataclass, field
 from typing import Sequence
 from urllib.parse import quote
@@ -102,6 +103,90 @@ class ProblemSpec:
     def spec_sha256(self) -> str:
         payload = json.dumps(dataclasses.asdict(self), ensure_ascii=False, sort_keys=True)
         return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
+
+
+ALLOWED_DECIMAL_SCORE_DISCLAIMER = "소수점(0.5점) 점수는 부여하지 않는다"
+
+_HTML_TAG_SAFE_RE = re.compile(
+    r"<!--.*?-->|</?(?:div|span|strong|em|b|i|u|br|hr|p|ul|ol|li|table|thead|tbody|tr|th|td|"
+    r"h[1-6]|img|meta|link|head|body|html|title|sub|sup|code|pre|section|article|header|footer)\b[^>]*>",
+    flags=re.DOTALL | re.IGNORECASE,
+)
+_UNIT_TOKENS = {"cm", "mm", "m", "km", "g", "kg", "mg", "s", "min", "h", "L", "mL"}
+
+
+def strip_known_html_tags(text: str) -> str:
+    no_blocks = re.sub(r"<(script|style|svg)\b[^>]*>.*?</\1>", " ", text, flags=re.DOTALL | re.IGNORECASE)
+    no_tags = _HTML_TAG_SAFE_RE.sub(" ", no_blocks)
+    return unicodedata.normalize("NFKC", html.unescape(no_tags))
+
+
+def extract_math_signature(text: str) -> tuple[list[str], list[str], list[str], list[str]]:
+    """
+    Extract canonical ordered `(numbers, rel_ops, latin_vars, hangul_words)` from either
+    LaTeX/HTML or Plain-Text math prose so cross-field / cross-file drift is caught reliably.
+    """
+    s = strip_known_html_tags(text)
+    s = s.replace("−", "-")
+    for _ in range(4):
+        s_next = re.sub(r"\\(?:d|t)?frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}", r"(\1)/(\2)", s)
+        if s_next == s:
+            break
+        s = s_next
+
+    s = re.sub(r"\\(?:leq|le)\b|<=|≤|≦", " <= ", s)
+    s = re.sub(r"\\(?:geq|ge)\b|>=|≥|≧", " >= ", s)
+    s = re.sub(r"\\(?:neq|ne)\b|!=|≠", " != ", s)
+    s = re.sub(r"(?<![<>!=])=(?!=)", " = ", s)
+    s = re.sub(r"<(?!=)", " < ", s)
+    s = re.sub(r"(?<![<>=!])>(?!=)", " > ", s)
+
+    s = re.sub(r"\\[A-Za-z]+", " ", s)
+    s = re.sub(r"[$\\{}^_]", " ", s)
+
+    numbers: list[str] = []
+    for tok in re.findall(r"\d+(?:\.\d+)?", s):
+        if "." in tok:
+            val = float(tok)
+            numbers.append(str(int(val)) if val.is_integer() else str(val))
+        else:
+            numbers.append(str(int(tok)))
+
+    rel_ops = re.findall(r"<=|>=|!=|<|>|=", s)
+    latin_vars = [
+        v for v in re.findall(r"(?<![A-Za-z])[A-Za-z]+(?![A-Za-z])", s) if v not in _UNIT_TOKENS
+    ]
+    hangul_words = re.findall(r"[가-힣]+", s)
+    return numbers, rel_ops, latin_vars, hangul_words
+
+
+def compute_html_body_sha256(html_text: str) -> str:
+    m = re.search(r"<body\b[^>]*>(.*)</body>", html_text, flags=re.DOTALL | re.IGNORECASE)
+    body = m.group(1) if m else html_text
+    norm = body.replace("\r\n", "\n").strip()
+    return hashlib.sha256(norm.encode("utf-8")).hexdigest()[:16]
+
+
+def validate_spec_consistency(spec: ProblemSpec) -> None:
+    """Ensure parallel `_latex` and `_plain` fields in `ProblemSpec` cannot silently diverge."""
+    stem_latex = "\n".join([spec.header_latex, *spec.formulas_latex, spec.question_latex, spec.condition_latex])
+    stem_plain = "\n".join([spec.header_plain, *spec.formulas_plain, spec.question_plain, spec.condition_plain])
+    s_num_l, s_op_l, s_var_l, _ = extract_math_signature(stem_latex)
+    s_num_p, s_op_p, s_var_p, _ = extract_math_signature(stem_plain)
+    if (s_num_l, s_op_l, s_var_l) != (s_num_p, s_op_p, s_var_p):
+        raise ValueError(
+            "ProblemSpec stem mismatch between LaTeX and Plain fields: "
+            f"LaTeX=(nums={s_num_l}, ops={s_op_l}, vars={s_var_l}) vs "
+            f"Plain=(nums={s_num_p}, ops={s_op_p}, vars={s_var_p})"
+        )
+
+    ans_sig_l = extract_math_signature(spec.final_answer_latex)
+    ans_sig_p = extract_math_signature(spec.final_answer_plain)
+    if ans_sig_l != ans_sig_p:
+        raise ValueError(
+            "ProblemSpec final_answer mismatch between final_answer_latex and final_answer_plain: "
+            f"LaTeX={ans_sig_l} vs Plain={ans_sig_p}"
+        )
 
 
 def default_common_guardrails_plain(spec: ProblemSpec) -> list[str]:
@@ -196,6 +281,7 @@ def _inject_local_katex(template_html: str, out_html_dir: str) -> str:
 
 def build_card_html(spec: ProblemSpec, out_html_path: str) -> str:
     """Generate the 1000x500 (2000x1000 @2x) Card HTML from `ProblemSpec`."""
+    validate_spec_consistency(spec)
     out_abs = os.path.abspath(out_html_path)
     out_dir = os.path.dirname(out_abs)
     with open(CARD_TEMPLATE_PATH, "r", encoding="utf-8") as f:
@@ -230,23 +316,25 @@ def build_card_html(spec: ProblemSpec, out_html_path: str) -> str:
             "    </div>"
         )
 
+    rendered = tpl.replace("<!-- PASSAGE_HTML_PLACEHOLDER -->", passage_html)
+    rendered = rendered.replace("<!-- RIGHT_PANEL_PLACEHOLDER -->", right_panel_html)
+    body_sha = compute_html_body_sha256(rendered)
     meta_tags = (
         f'  <meta name="snorkl-spec-sha256" content="{spec.spec_sha256()}">\n'
-        f'  <meta name="snorkl-final-answer" content="{html.escape(spec.final_answer_plain)}">'
+        f'  <meta name="snorkl-body-sha256" content="{body_sha}">'
     )
-    rendered = re.sub(r"(<meta charset=\"UTF-8\">)", rf"\1\n{meta_tags}", tpl, count=1)
-    rendered = rendered.replace("<!-- PASSAGE_HTML_PLACEHOLDER -->", passage_html)
-    rendered = rendered.replace("<!-- RIGHT_PANEL_PLACEHOLDER -->", right_panel_html)
+    rendered = re.sub(r"(<meta charset=\"UTF-8\">)", rf"\1\n{meta_tags}", rendered, count=1)
 
     out_abs = os.path.abspath(out_html_path)
     os.makedirs(os.path.dirname(out_abs), exist_ok=True)
-    with open(out_abs, "w", encoding="utf-8") as f:
+    with open(out_abs, "w", encoding="utf-8", newline="\n") as f:
         f.write(rendered)
     return out_abs
 
 
 def build_snorkl_markdown(spec: ProblemSpec, out_md_path: str) -> str:
     """Generate the 100% Plain-Text (`$`-free) Snorkl `정답/평가 기준` `.md` file."""
+    validate_spec_consistency(spec)
     lines: list[str] = []
 
     lines.append("[문항]")
@@ -285,7 +373,7 @@ def build_snorkl_markdown(spec: ProblemSpec, out_md_path: str) -> str:
             lines.append(f"  - 대체 인정: {alt.mapping_plain.strip()}")
         lines.append("")
 
-    lines.append("[공통 채점 가드레일]")
+    lines.append("[공통 채점 원칙]")
     for idx, rule in enumerate(default_common_guardrails_plain(spec), start=1):
         lines.append(f"{idx}. {rule}")
     lines.append("")
@@ -299,13 +387,14 @@ def build_snorkl_markdown(spec: ProblemSpec, out_md_path: str) -> str:
     content = "\n".join(lines).rstrip() + "\n"
     out_abs = os.path.abspath(out_md_path)
     os.makedirs(os.path.dirname(out_abs), exist_ok=True)
-    with open(out_abs, "w", encoding="utf-8") as f:
+    with open(out_abs, "w", encoding="utf-8", newline="\n") as f:
         f.write(content)
     return out_abs
 
 
 def build_teacher_sheet_html(spec: ProblemSpec, card_png_path: str, out_html_path: str) -> str:
     """Generate the Teacher Reference A4 HTML (with portable local KaTeX & card preview href)."""
+    validate_spec_consistency(spec)
     out_abs = os.path.abspath(out_html_path)
     out_dir = os.path.dirname(out_abs)
     with open(SHEET_TEMPLATE_PATH, "r", encoding="utf-8") as f:
@@ -324,9 +413,8 @@ def build_teacher_sheet_html(spec: ProblemSpec, card_png_path: str, out_html_pat
     blocks.append(
         '<div class="section-title">1. 최종 정답 및 교과서 표준 모범답안</div>\n'
         '  <div class="info-box">\n'
-        f'    <div id="final-answer-box" data-final-answer="{html.escape(spec.final_answer_plain)}" '
-        'style="margin-bottom: 5px;">'
-        f"<strong>[최종 정답 (정오 판단 기준)]</strong> {spec.final_answer_latex}</div>\n"
+        '    <div id="final-answer-box" style="margin-bottom: 5px;">'
+        f'<strong>[최종 정답 (정오 판단 기준)]</strong> <span id="final-answer-value">{spec.final_answer_latex}</span></div>\n'
         f'    <div><strong>[기본 모범답안]</strong> {spec.model_solution_latex}</div>\n'
         "  </div>"
     )
@@ -395,17 +483,18 @@ def build_teacher_sheet_html(spec: ProblemSpec, card_png_path: str, out_html_pat
 
     content_html = "\n\n  ".join(blocks)
 
+    rendered = tpl.replace("<!-- TITLE_PLACEHOLDER -->", html.escape(spec.title))
+    rendered = rendered.replace("<!-- CONTENT_HTML_PLACEHOLDER -->", content_html)
+    body_sha = compute_html_body_sha256(rendered)
     meta_tags = (
         f'  <meta name="snorkl-spec-sha256" content="{spec.spec_sha256()}">\n'
-        f'  <meta name="snorkl-final-answer" content="{html.escape(spec.final_answer_plain)}">'
+        f'  <meta name="snorkl-body-sha256" content="{body_sha}">'
     )
-    rendered = re.sub(r"(<meta charset=\"UTF-8\">)", rf"\1\n{meta_tags}", tpl, count=1)
-    rendered = rendered.replace("<!-- TITLE_PLACEHOLDER -->", html.escape(spec.title))
-    rendered = rendered.replace("<!-- CONTENT_HTML_PLACEHOLDER -->", content_html)
+    rendered = re.sub(r"(<meta charset=\"UTF-8\">)", rf"\1\n{meta_tags}", rendered, count=1)
 
     out_abs = os.path.abspath(out_html_path)
     os.makedirs(os.path.dirname(out_abs), exist_ok=True)
-    with open(out_abs, "w", encoding="utf-8") as f:
+    with open(out_abs, "w", encoding="utf-8", newline="\n") as f:
         f.write(rendered)
     return out_abs
 

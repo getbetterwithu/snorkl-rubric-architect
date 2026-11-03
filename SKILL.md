@@ -50,8 +50,8 @@ metadata:
    - 오른쪽 도형 영역 규격은 `480×456` CSS px (`viewBox="0 0 480 456"`, 외곽 `36px` 안전 여백 확보)입니다.
    - 모든 점·선·음영은 파이썬에서 계산한 좌표 변수(`A, B, C, P`)를 공유하며 임의 숫자를 하드코딩하지 않습니다.
    - 교점은 `line_intersection()`(평행·일치 시 `ValueError` 발생), 색칠 영역은 `render_shaded_region()`(오목다각형 자동 내부 안전점 보정 포함), 원·호·점선·치수호·좌표축은 내장 헬퍼(`render_circle`, `render_arc`, `render_dashed_line`, `render_dimension_arc`, `render_coord_axes`)를 사용합니다.
-3. **`scripts/snorkl_builder.py` (단일 진실 공급원 빌더 — 권장)**
-   - 단일 `ProblemSpec` 데이터 객체에서 카드 HTML, 스노클 `.md`, 교사용 기준표 HTML을 동시 생성하고 로컬 `scripts/vendor/katex/`(수식 폰트 20종 내장, 오프라인 100% 동작) 경로를 자동 주입합니다.
+3. **`scripts/snorkl_builder.py` (단일 진실 공급원 빌더 — 필수)**
+   - 세 산출물의 수치·조건·정답 불일치를 원천 차단하기 위해 반드시 단일 `ProblemSpec` 데이터 객체와 `snorkl_builder.py`로 카드 HTML, 스노클 `.md`, 교사용 기준표 HTML을 생성합니다(임의로 HTML·MD를 따로 수기 조합하지 말 것). 로컬 `scripts/vendor/katex/`(수식 폰트 20종 내장, 오프라인 100% 동작) 경로도 자동 주입됩니다.
    - 대수·확률 등 비도형 문항도 카드 이미지를 생략하지 않고 `svg_diagram=""`으로 두어 **[왼쪽 지문 + 오른쪽 학생 필기용 화이트보드 여백]** 카드를 생성합니다.
 4. **`scripts/render_card.py` & `scripts/validate_outputs.py` (렌더링 및 강제 품질 게이트)**
    ```bash
@@ -60,7 +60,7 @@ metadata:
    python <skill_root>/scripts/render_card.py --pdf <sheet.html> <out_dir>/<제목>_교사참고용_채점기준표.pdf
    python <skill_root>/scripts/validate_outputs.py <out_dir> --slug "<제목>"
    ```
-   - Step 5 완료 선언 전 **`validate_outputs.py` 종료 코드 `0` 통과는 필수**입니다(PNG `2000×1000` 헤더, `.md` 내 `$`/LaTeX 잔재 0건, `[△ABC]` 대괄호 넓이 기호 0건, DOM 넘침·깨진 이미지 0건, PDF 페이지 수 및 카드-MD-PDF 수치·정답 일치성 자동 검증).
+   - Step 5 완료 선언 전 **`validate_outputs.py` 종료 코드 `0` 통과는 필수**이며, `--skip-audit`, `--skip-dom`, `--allow-missing-html` 같은 검증 우회 플래그를 임의로 사용하는 것을 금지합니다.
 
 ---
 
@@ -97,6 +97,7 @@ metadata:
 
 ### Step 2. 문제 카드(`2000×1000`) 렌더링 및 시각 검토
 - 선택된 방향으로 카드를 조립해 `render_card.py`로 렌더링하고, 생성된 PNG의 로컬 절대 경로(`[파일명](file:///...)`)와 이미지를 제시합니다.
+- **수식 이스케이프 주의 및 시각 검증**: 수식(`\triangle`, `\text` 등 백슬래시 포함 문자열)은 비원시 파이썬 문자열에서 `\t` 등이 이스케이프 문자로 깨지지 않도록 원시 문자열(`r"..."`)이나 파일로 전달하고, 렌더링 뒤 결과 이미지에 'riangle', 'ext' 같은 깨진 글자가 없는지 확인한 뒤 교사에게 보여 줍니다.
 - 발문 정확성, 수식 독립 블록 조판, 도형 라벨·음영 안착(또는 필기 여백)을 확인 요청한 뒤 **즉시 멈춥니다.**
 
 ### Step 3. 교과서 표준 모범답안 및 `0~4점` 채점 기준 검토

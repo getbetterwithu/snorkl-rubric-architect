@@ -89,6 +89,7 @@
     }
     .passage .katex {
       font-family: KaTeX_Main, "Times New Roman", serif;
+      white-space: nowrap;
     }
     .target-question {
       margin-top: 8px;
@@ -210,6 +211,7 @@
   <script>
     (function() {
       document.documentElement.dataset.renderStatus = 'pending';
+      document.documentElement.dataset.renderReady = 'false';
       const baseErrors = [];
       if (typeof renderMathInElement !== 'function') {
         baseErrors.push('katex_not_loaded');
@@ -220,6 +222,7 @@
               {left: '$$', right: '$$', display: true},
               {left: '$', right: '$', display: false}
             ],
+            output: 'html',
             throwOnError: false,
             strict: false
           });
@@ -228,7 +231,7 @@
         }
       }
 
-      function finalizeAudit() {
+      function finalizeAudit(markReady) {
         const errors = baseErrors.slice();
         const katexErrors = document.querySelectorAll('.katex-error');
         if (katexErrors.length > 0) {
@@ -248,25 +251,41 @@
           }
         });
 
-        const passage = document.querySelector('.passage');
-        if (passage) {
-          const fs = parseFloat(window.getComputedStyle(passage).fontSize || '20');
-          if (fs < 15.0) {
-            errors.push('font_too_small:passage(' + fs + 'px)');
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+        const checkedEls = new Set();
+        let tNode;
+        while ((tNode = walker.nextNode())) {
+          if (!tNode.nodeValue || !tNode.nodeValue.trim()) continue;
+          const el = tNode.parentElement;
+          if (!el || checkedEls.has(el)) continue;
+          if (el.closest('script, style, svg, .katex-mathml')) continue;
+          checkedEls.add(el);
+          const cs = window.getComputedStyle(el);
+          if (cs.display === 'none' || cs.visibility === 'hidden') continue;
+          const fs = parseFloat(cs.fontSize || '16');
+          const minFs = el.closest('.katex') ? 8.5 : 12.0;
+          if (fs < minFs) {
+            errors.push('font_too_small:' + (el.className || el.tagName) + '(' + fs + 'px)');
           }
         }
 
         document.querySelectorAll('img').forEach(function(img) {
-          if (!img.complete || img.naturalWidth === 0) {
+          if (markReady) {
+            if (!img.complete || img.naturalWidth === 0) {
+              errors.push('broken_image:' + (img.getAttribute('src') || 'unknown'));
+            }
+          } else if (img.complete && img.naturalWidth === 0) {
             errors.push('broken_image:' + (img.getAttribute('src') || 'unknown'));
           }
         });
 
         document.documentElement.dataset.renderStatus = errors.length === 0 ? 'ok' : errors.join(';');
-        document.documentElement.dataset.renderReady = 'true';
+        if (markReady) {
+          document.documentElement.dataset.renderReady = 'true';
+        }
       }
 
-      finalizeAudit();
+      finalizeAudit(false);
 
       const fontPromise = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
       const imagePromises = Array.from(document.images || []).map(function(img) {
@@ -277,7 +296,7 @@
       });
 
       Promise.all([fontPromise].concat(imagePromises)).then(function() {
-        setTimeout(finalizeAudit, 20);
+        setTimeout(function() { finalizeAudit(true); }, 20);
       });
     })();
   </script>
